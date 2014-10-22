@@ -1,0 +1,101 @@
+  body
+    {
+      top:0%;
+      left:0%;
+      width: 100%;
+      height: 100%;
+      display:block;
+      position: absolute;
+      padding: 0px;
+      margin: 0px;   
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    } 
+  
+.optionmainbtn{
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  border: 1px solid #0185c1;
+  font: normal 1.5em/normal "Times New Roman", Times, serif;
+  color: rgba(255,255,255,1);
+  text-align: center;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  background: #0199d9;
+  -webkit-box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) ;
+  box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2) ;  
+  margin:.3%;
+}
+.optionmainbtn:hover{
+  -webkit-box-shadow: 0 0 3px 4px rgba(1,153,217,1) ;
+  box-shadow: 0 0 3px 4px rgba(1,153,217,1) ;
+}
+.optionmainbtnclick{
+  font: normal normal bold 1.5em/normal "Times New Roman", Times, serif;
+}
+.optionbtn{
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  border: 1px solid #cecece;
+  font: normal 12px/normal "ABeeZee", Helvetica, sans-serif;
+  color: rgba(0,0,0,1);
+  text-align: center;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  background: #f5f5f5;
+}
+.optionbtn:hover{
+  border: 1px solid #898888;
+  -webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5) ;
+  box-shadow: 0 0 2px 1px rgba(0,0,0,0.5) ;
+}
+.displaydiv{
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  overflow: hidden;
+  border: none;  
+  border: 1px solid #898888;
+  font: normal 16px/1 "Times New Roman", Times, serif;
+  color: rgba(0,0,0,1);
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  background: rgba(242,242,242,1);
+}
+ul{
+  list-style-type: none;
+  padding:0;
+  margin:0;
+  left: 5%;
+  position:absolute; 
+  line-height: .6em;
+}
+.canvousdiv{
+  top:10.2%;
+  left:31%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  display: block;
+  padding: auto;
+  margin: 0px; 
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  border: 1px solid #898888;
+  color: rgba(0,0,0,1);
+  background: #f5f5f5;
+  -webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5) ;
+  box-shadow: 0 0 2px 1px rgba(0,0,0,0.5) ;
+} 

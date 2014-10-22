@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Ng-DicomViewer
+    </title>
+   
+     
+    <script type="text/javascript" src="Src/Dwv/dicom/dicomParser.js"></script>
+    <script type="text/javascript" src="Src/Dwv/dicom/dictionary.js"></script>
+
+    <script type="text/javascript" src="Src/Dwv/gui/browser.js"></script> 
+
+    <script type="text/javascript" src="Src/Dwv/image/image.js"></script>
+    <script type="text/javascript" src="Src/Dwv/image/luts.js"></script>
+    <script type="text/javascript" src="Src/Dwv/image/view.js"></script>
+
+    <script type="text/javascript" src="Src/Dwv/utils/string.js"></script>
+    <script type="text/javascript" src="Src/Dwv/openjpeg/openjpeg.js"></script>  
+    
+    <script src="Src/FrameWork/angular.js"></script> 
+    <script src="Src/NgDicomViewer.js"></script> 
+    
+     <link rel="stylesheet" type="text/css" href="Style.css">
+  </head>
+  <body  oncontextmenu="return false;"> 
+    <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller"  style="top:0%;left: 0%;width: 99.8%;height: 100%;padding: 0px; position: absolute">
+    <header class ="displaydiv" style="top:0%;left: 0%;width: 100%;height: 6%;position: absolute"> 
+     <input ng-init = "optionState =false;"  ng-click = "optionState = !optionState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':optionState}"type="button" value="=" />
+      <span style="top:0%;left: 25%;width: 50%;height: 100%; margin:.3%;text-align: center;font-size: 2em; position: absolute"> Ng - DicomViewer </span>
+      <input id="tagbtn" ng-init = "tagState =false;"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" />
+    </header>
+    <div class = "canvousdiv">
+      <dicomviewer clearbuttonid="clrbtn" clearannotationbuttonid = "clrann" tool={{SelectedTool}} colour={{SelectedColor}} fileutilityid ="fileinput" tagdivid="tagdiv" tagbuttonid="tagbtn" applybtnid="applybtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer> 
+    </div> 
+    <div ng-show = "optionState" class = "displaydiv" style="top:6.2%;left: 0%;width: 20%;height: 87.1%;position: absolute">
+      <ul>            
+      <!--style="text-align: center;left: 25%;width:50%;position: absolute"-->
+         <li><br><span>OPTIONS</span></li><hr>
+         <li><span>Tools :</span>
+             <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li><br>
+         <li><span>Color    :</span>
+             <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li><br>     
+         <li><input  id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li><br>
+     <!--    <li><input  id="tagbtn" class = "optionbtn" type="button" value="Tag" /></li><br>  -->
+         <li><input ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'" class = "optionbtn" type="button" value="Apply" id="applybtn" /></li><br>
+         <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li><br>
+         <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li><br> 
+      </ul> 
+    </div>    
+    <div class = "displaydiv" ng-show = "tagState" id ="tagdiv" style="top:6.2%;left: 65%;width: 34.6%;height: 86.6%;position: absolute ;z-index: 50;overflow: auto;line-height: 15px;padding: 0.2%">
+    <span ng-show="Tag">Search : </span><input ng-show="Tag" class="optionbtn" type="text"style="text-align: left" ng-model = "search">
+     <div ng-show="Tag" style="height:20px; width: 100%;position:relative;display:table"> 
+       <span style="left: 0%;width: 45%;position: absolute ; text-align: center;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" >Name</span>
+       <span style="left: 45%;width: 30%;position: absolute ; text-align: center;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" >Tag</span>
+       <span style="left: 75%;width: 25%;position: absolute ;text-align: center;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" >Value</span>
+       <span style="left: 100%;width: 77%;position: absolute ;text-align: center;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" ><br></span>
+     </div>
+     <div style="top:45px;width: 100%;position:absolute;display:table;">  
+     <div ng-repeat = "tagObj in Tag | filter:search" style="width: 100%;height:15px;position:relative;display:inline-table;">
+       <span style="left: 0%;width: 45%;height:15px;position: absolute ;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.Name}}</span>
+       <span style="left: 45%;width: 30%;height:15px;position: absolute ;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.TagStr}}</span>
+       <span style="left: 75%;width: 100%;height:15px;position: absolute;overflow: hidden ;border-bottom: #898888 1px solid" >{{tagObj.Value}}</span></div>
+     </div>
+     <div ng-hide="Tag"  style="top:45%;left:10%;width: 80%;height:10%;text-align: center; position:relative;display:inline-table">
+        Here Demographic information will be Shown once Image is added
+     </div>
+    </div>         
+     <footer class ="displaydiv" style="top:93.7%;left: 0%;width: 100%;height: 6%;position: absolute">
+      <span ng-show="PatientName" style="top:0%;left: 20%;width: 30%;height: 50%;text-align: left;font-size: 1em; position: absolute"> PatientName:{{PatientName}}</span>
+      <span ng-show="PatientId" style="top:50%;left: 20%;width: 30%;height: 50%;text-align: left;font-size: 1em; position: absolute"> PatientId:{{PatientId}}</span>
+      <span ng-show="WWidth" style="top:0%;left: 50%;width: 30%;height: 50%;text-align: right;font-size: 1em; position: absolute"> Window Width:{{WWidth}}</span>
+      <span ng-show="WCenter" style="top:50%;left: 50%;width: 30%;height: 50%;text-align: right;font-size: 1em; position: absolute"> Window Center:{{WCenter}}</span>
+     </footer>
+  </div> 
+      
+  </body>
+</html>

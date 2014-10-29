@@ -54,7 +54,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           }
         };        
        
-        var mouseDown = function(event){ 
+        var mouseDown = function(event){
+          if(!imagehandler) 
+            return false;       
           if(!imagehandler.GetCanvasImage())//imageData
              return false;
           if(attrs["tool"]!="WindowLevel")
@@ -69,7 +71,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           
         }   
         
-        var mouseMove =function(event){
+        var mouseMove =function(event){ 
+          if(!imagehandler) 
+            return false;
           if(!imagehandler.GetCanvasImage())//imageData
              return false;
           if(attrs["tool"]!="WindowLevel")
@@ -82,7 +86,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           }
         }
           
-        var mouseUp = function(event){
+        var mouseUp = function(event){    
+          if(!imagehandler) 
+            return false;        
           if(!imagehandler.GetCanvasImage())//imageData
              return false; 
           if(attrs["tool"]!="WindowLevel")
@@ -625,10 +631,6 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       }
       
     }; 
-//    WindowLevelTool.prototype.SetViewer = function(viewer)
-//    {
-//       this.viewer = viewer
-//    }; 
     WindowLevelTool.prototype.Start = function(event)
     {
          this.startX = event.offsetX;
@@ -811,12 +813,6 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.canvas = this.imageHandler.canvas; 
       }
     };    
-//    FilterTool.prototype.SetViewer = function(viewer,canvas,context)
-//    { 
-//      this.viewer = viewer;
-//      this.canvas =canvas;
-//      this.context = context;
-//    };
     FilterTool.prototype.Sobel = function()
     {  
       if(!this.viewer)
@@ -1114,4 +1110,26 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       return instence;
     }
    return ToolHandler;
+  })();
+  
+  var FileHandler = (function(){
+    function FileHandler()
+    {
+        this.fileList = []
+    }
+    FileHandler.prototype.Initialize = function(fileApiObjArray)
+    {                   
+      for(var i=0,length =fileApiObjArray.lenght;i<length;i++ )
+      {
+        var file = new fileParam();
+        file.FileObj = fileApiObjArray[i];
+        file.ImageHandler = new ImageHandler();
+        this.fileList.push(file); 
+      }
+    };   
+    var fileParam = function(){
+      this.FileObj;
+      this.ImageHandler;
+    };
+    return ToolHandler;
   })();

@@ -29,7 +29,6 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         var currentShape = attrs["tool"]; 
         var currentColour =attrs["colour"];
         var imageData= null;
-        var originalImageData = null;  
         var tags= null;
         $rootScope.Tag = []; 
         var view = null; 
@@ -165,8 +164,6 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
                    $rootScope.WWidth = view.getWindowLut().getWidth(); 
                    $rootScope.WCenter = view.getWindowLut().getCenter();
                 });     
-                originalImageData =context.createImageData(canvas.width, canvas.height); 
-                view.generateImageData(originalImageData);
               }
            }
            catch(ex)

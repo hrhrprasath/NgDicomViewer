@@ -28,10 +28,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         //@ tools and Shapes part-------------------<
         var currentShape = attrs["tool"]; 
         var currentColour =attrs["colour"];
-        var imageData= null;
-        var tags= null;
         $rootScope.Tag = []; 
-        var view = null; 
+        var view = null;
+        var filehandler = null 
         var imagehandler =null;
       
         var buttonTool = function()
@@ -114,9 +113,32 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
             applybtn.bind("click",buttonTool);
         }
     
-       var mouseWheel = function(e){ 
+       var mouseWheel = function(event){ 
          //ToDo: Zoom in and zoom out logic pending
-        //imagehandler.GetTransformationTool().Start(e,imageData);
+        //imagehandler.GetTransformationTool().Start(e,imageData); 
+        if(!filehandler) 
+          return;      
+        //image loading 
+        if(event.wheelDelta < 0)
+        {   
+          var idx = filehandler.GetCurrentIndex();
+          if((idx+1) <(filehandler.fileList.length )) 
+          {   
+              filehandler.SetDisplayFile(idx+1);  
+             imagehandler =filehandler.GetCurrentImageHandler();
+          }
+        }
+        else
+        { 
+          var idx = filehandler.GetCurrentIndex();
+          if(idx && (idx <(filehandler.fileList.length)))     
+          {
+              filehandler.SetDisplayFile(idx-1);  
+              imagehandler =filehandler.GetCurrentImageHandler();
+          }
+        
+        }
+        
        };
        angularCanvas.bind('mousewheel',mouseWheel);
         ///@End of Shapes------------------------------------->
@@ -125,53 +147,22 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        var fileUtilityElement = angular.element(document.getElementById(attrs["fileutilityid"])); 
        var onFileListChanged = function(event)
        {
-          var filesArray = event.target.files;
-          //we are going to take only one file for now
-          var file = filesArray[0];
-          var reader = new FileReader();  
-          var canvas=angularCanvas[0];
-          var context=canvas.getContext("2d");
-          //event call back of  FileReader Api
-          reader.onloadend = function(evt)  {   
-          try{   
-              clear();
-              if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                byteArray =evt.target.result;    
-                // DICOM parser
-                var dicomParser = new dwv.dicom.DicomParser();
-                // parse the buffer
-                dicomParser.parse(byteArray);  
-                //image.view object
-                view = dicomParser.createImage();  
-                tags = dicomParser.dicomElements;
-                var img=view.getImage(); 
-                var size =img.getSize();  
-                canvas.width = size.getNumberOfColumns();
-                canvas.height = size.getNumberOfRows();
-                
-                element[0].style.width = (canvas.width) +'px';
-                element[0].style.height = (canvas.height)+'px';
-                
-                imagehandler = new ImageHandler();
-                imagehandler.SetViewer(view);
-                imagehandler.SetTag(tags);
-                imagehandler.SetCanvas(angularCanvas[0]);
-                imagehandler.DrawImage();
-                scope.$apply(function () {
-                   $rootScope.Tag=imagehandler.GetFilteredTags(); 
-                   $rootScope.PatientName = tags.PatientName.value.toString();
-                   $rootScope.PatientId = tags.PatientID.value.toString();
-                   $rootScope.WWidth = view.getWindowLut().getWidth(); 
-                   $rootScope.WCenter = view.getWindowLut().getCenter();
-                });     
-              }
-           }
-           catch(ex)
-           {
-            alert (ex.message);
-           } 
-        };
-        reader.readAsArrayBuffer(file); 
+          var filesArray = event.target.files;   
+          clear();     
+          var loadFinishCallBack = function(){
+          scope.$apply(function () {
+             $rootScope.Tag=imagehandler.GetFilteredTags(); 
+             $rootScope.PatientName = imagehandler.tag.PatientName.value.toString();
+             $rootScope.PatientId = imagehandler.tag.PatientID.value.toString();
+             $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth(); 
+             $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
+          });
+          };   
+          filehandler = FileHandler.GetInstence();  
+          filehandler.SetElements(angularCanvas[0],element[0],loadFinishCallBack);
+          filehandler.Initialize(filesArray);
+          filehandler.SetDisplayFile(0);
+          imagehandler =filehandler.GetCurrentImageHandler();
        }
                                               
        fileUtilityElement.bind('change',onFileListChanged); 
@@ -286,7 +277,6 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this._isMouseMoved = true;    
         this.context.beginPath(); 
         this.imageHandler.ResetAndUpdate();
-          
         if(this.currentShape == "line" )
         {
             this.context.moveTo(this.startx ,this.starty);  
@@ -611,7 +601,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
      this.startY;  
      this.viewer; 
      this.isActive = false;
-     this.imageHandler;
+     this.imageHandler = null;
      this.canvas;
      this.context; 
      this.maptoolName;
@@ -705,6 +695,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.imageData;
       this.cacheCanvas;
       this._scale =1;
+      this.imageHandler = null;
     } 
     TransformationTool.prototype.SetImageHandler = function(handler)
     {  
@@ -931,21 +922,27 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     }; 
     ImageHandler.prototype.GetAnnotationTool = function()
     {   
-      this._annotationTool = this.toolHandler.GetAnnotationTool();    
-      return  this._annotationTool;
+     // this._annotationTool = this.toolHandler.GetAnnotationTool();    
+     // return  this._annotationTool; 
+     this.toolHandler.SetImageHandler(this);
+     return  this.toolHandler.GetAnnotationTool(); 
     };
     ImageHandler.prototype.GetWindowLevelTool = function()
     { 
+      this.toolHandler.SetImageHandler(this);
       return this.toolHandler.GetWindowLevelTool();
     };
     ImageHandler.prototype.GetFilterTool = function()
     {                          
+      this.toolHandler.SetImageHandler(this);
       return this.toolHandler.GetFilterTool();
     };
     ImageHandler.prototype.GetTransformationTool = function()
     { 
-      this._transformationTool = this.toolHandler.GetTransformationTool();
-      return this._transformationTool;
+     // this._transformationTool = this.toolHandler.GetTransformationTool();
+      //return this._transformationTool;  
+      this.toolHandler.SetImageHandler(this);
+      return this.toolHandler.GetTransformationTool();
     };
     ImageHandler.prototype.DrawImage = function()
     {        
@@ -964,7 +961,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     };
     ImageHandler.prototype.ResetImage = function()
     { 
-      this.context.width = this.context.width
+      this.canvas.width = this.canvas.width
       this.context.putImageData(this.canvasImage, 0, 0);
     };
     ImageHandler.prototype.Clear = function()
@@ -1013,22 +1010,19 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     ImageHandler.prototype.Update = function()
     {                                   
       //this.ApplyCurrentTransformation(); 
-      if(this._annotationTool)
-      this._annotationTool.DrawHistory();    
+     this.GetAnnotationTool().DrawHistory();    
       
     };  
     ImageHandler.prototype.ResetAndUpdate = function()
     {                                   
       //this.ApplyCurrentTransformation(); 
       this.ResetImage();
-      if(this._annotationTool)
-      this._annotationTool.DrawHistory();    
+      this.GetAnnotationTool().DrawHistory();    
       
     }; 
     ImageHandler.prototype.UpdateAnnotation = function()
     {                                   
-      if(this._annotationTool)
-      this._annotationTool.DrawHistory();    
+      this.GetAnnotationTool().DrawHistory();    
       
     }; 
     ImageHandler.prototype.GetFilteredTags = function()
@@ -1112,21 +1106,111 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
   var FileHandler = (function(){
     function FileHandler()
     {
-        this.fileList = []
-    }
-    FileHandler.prototype.Initialize = function(fileApiObjArray)
+        this.fileList = [];
+        this.canvas = null;
+        this.context = null;
+        this.parentElement = null;
+        this.callBack = null;
+        this.index = 0;
+    }      
+    FileHandler.prototype.SetElements = function(canvas,parentElement,callback)
     {                   
-      for(var i=0,length =fileApiObjArray.lenght;i<length;i++ )
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");  
+        this.parentElement = parentElement;
+        this.callBack = callback;
+    };  
+    FileHandler.prototype.Initialize = function(fileApiObjArray)
+    {    
+      this.index = 0;
+      this.fileList.length = 0;               
+      for(var i=0,length =fileApiObjArray.length;i<length;i++ )
       {
         var file = new fileParam();
         file.FileObj = fileApiObjArray[i];
         file.ImageHandler = new ImageHandler();
         this.fileList.push(file); 
       }
-    };   
-    var fileParam = function(){
-      this.FileObj;
-      this.ImageHandler;
+    };        
+    FileHandler.prototype.LoadFile = function(fileListObj)
+    {                   
+        var reader = new FileReader();  
+        var canvas = this.canvas;
+        var parentElement = this.parentElement   
+        var callback =this.callBack;
+        //event call back of  FileReader Api
+        reader.onloadend = function(evt)  {   
+        try{   
+            if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+              byteArray =evt.target.result;    
+              // DICOM parser
+              var dicomParser = new dwv.dicom.DicomParser();
+              // parse the buffer
+              dicomParser.parse(byteArray);  
+              //image.view object
+              view = dicomParser.createImage();  
+              tags = dicomParser.dicomElements;
+              var img=view.getImage(); 
+              var size =img.getSize();  
+              canvas.width = size.getNumberOfColumns();
+              canvas.height = size.getNumberOfRows();
+              
+              parentElement.style.width = (canvas.width) +'px';
+              parentElement.style.height = (canvas.height)+'px';
+              
+              fileListObj.ImageHandler.SetViewer(view);
+              fileListObj.ImageHandler.SetTag(tags);
+              fileListObj.ImageHandler.SetCanvas(canvas);
+              fileListObj.ImageHandler.DrawImage(); 
+              if(callback)
+                callback();
+
+            }
+         }
+         catch(ex)
+         {
+          alert (ex.message);
+         } 
+      };
+      reader.readAsArrayBuffer(fileListObj.FileObj); 
     };
-    return ToolHandler;
+    FileHandler.prototype.SetDisplayFile = function(index)
+    { 
+      this.index = index;
+      var imghandler =this.fileList[this.index].ImageHandler;
+      if(!imghandler.GetCanvasImage())                   
+        this.LoadFile(this.fileList[this.index]);
+      else   
+      {  
+        var img=imghandler.Getimage(); 
+        var size =img.getSize();  
+        this.canvas.width = size.getNumberOfColumns();
+        this.canvas.height = size.getNumberOfRows();
+        this.canvas.height = size.getNumberOfRows();
+        this.parentElement.style.width = (this.canvas.width) +'px';
+        this.parentElement.style.height = (this.canvas.height)+'px';
+        imghandler.ResetAndUpdate(); 
+      }
+    };
+    FileHandler.prototype.GetCurrentIndex = function(index)
+    { 
+       return this.index;                  
+    };   
+    FileHandler.prototype.GetCurrentImageHandler = function(index)
+    { 
+      return this.fileList[this.index].ImageHandler;
+    };        
+    var fileParam = function(){
+      this.FileObj = null;
+      this.ImageHandler = null;
+    };  
+     
+    var instence = null
+    FileHandler.GetInstence = function()
+    {
+      if(!instence)  
+        instence = new FileHandler();
+      return instence;
+    }
+    return FileHandler;
   })();

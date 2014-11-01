@@ -125,7 +125,8 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           if((idx+1) <(filehandler.fileList.length )) 
           {   
               filehandler.SetDisplayFile(idx+1);  
-             imagehandler =filehandler.GetCurrentImageHandler();
+             imagehandler =filehandler.GetCurrentImageHandler();  
+             fileChangeUpdate();
           }
         }
         else
@@ -134,7 +135,8 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           if(idx && (idx <(filehandler.fileList.length)))     
           {
               filehandler.SetDisplayFile(idx-1);  
-              imagehandler =filehandler.GetCurrentImageHandler();
+              imagehandler =filehandler.GetCurrentImageHandler(); 
+              fileChangeUpdate();
           }
         
         }
@@ -144,12 +146,8 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         ///@End of Shapes------------------------------------->
         
         ///Dicom File Handleing----------------<
-       var fileUtilityElement = angular.element(document.getElementById(attrs["fileutilityid"])); 
-       var onFileListChanged = function(event)
-       {
-          var filesArray = event.target.files;   
-          clear();     
-          var loadFinishCallBack = function(){
+       var fileUtilityElement = angular.element(document.getElementById(attrs["fileutilityid"]));  
+       var fileChangeUpdate = function(){
           scope.$apply(function () {
              $rootScope.Tag=imagehandler.GetFilteredTags(); 
              $rootScope.PatientName = imagehandler.tag.PatientName.value.toString();
@@ -157,9 +155,14 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
              $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth(); 
              $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
           });
-          };   
+          };  
+       var onFileListChanged = function(event)
+       {
+          var filesArray = event.target.files;   
+          clear();     
+          
           filehandler = FileHandler.GetInstence();  
-          filehandler.SetElements(angularCanvas[0],element[0],loadFinishCallBack);
+          filehandler.SetElements(angularCanvas[0],element[0],fileChangeUpdate);
           filehandler.Initialize(filesArray);
           filehandler.SetDisplayFile(0);
           imagehandler =filehandler.GetCurrentImageHandler();

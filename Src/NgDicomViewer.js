@@ -229,7 +229,13 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this._pixelSpacingY = 1; 
         this._isMouseMoved = false; 
         this.imageHandler = null;
-    } 
+    }   
+     /**
+     * To Set ImageHandler's object into current stream 
+     * @method SetImageHandler
+     * @param {imagehandler} ImageHandler object 
+     * @return none
+     */ 
     AnnotationTools.prototype.SetImageHandler = function(imagehandler)
     { 
       if(imagehandler)
@@ -509,7 +515,6 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
            return (this._pixelSpacingX * this._pixelSpacingY * a * b * Math.PI/ 100).toFixed(3);
         }    
     }; 
-
      /**
      * To redraw annotations in history 
      * @method DrawHistory
@@ -570,7 +575,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       }  
     };
     /**
-     * To class to store the current tool requred infomation for drawing  
+     * Class to store the current tool requred infomation for drawing  
      * @class toolParam
      * @param none
      * @return none
@@ -595,8 +600,15 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     };
          
     return AnnotationTools;
-  })();
+  })();    
   
+  /*********************   
+  Summary:To perform LUT operations
+  * @class WindowLevelTool  
+  * @namespace 
+  * @constructor
+  * @param 
+  **********************/
   var WindowLevelTool = (function(){
     function WindowLevelTool()
     {
@@ -608,7 +620,13 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
      this.canvas;
      this.context; 
      this.maptoolName;
-    }
+    }  
+    /**
+    * To Set ImageHandler's object into current stream 
+    * @method SetImageHandler
+    * @param {imagehandler} ImageHandler object 
+    * @return none
+    */ 
     WindowLevelTool.prototype.SetImageHandler = function(handler)
     {  
       if(handler)
@@ -620,13 +638,25 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.maptoolName= this.imageHandler.currentTool;            
       }
       
-    }; 
+    };   
+    /**
+    * To capture mouse down event 
+    * @method Start
+    * @param {event} mouse event
+    * @return none
+    */ 
     WindowLevelTool.prototype.Start = function(event)
     {
          this.startX = event.offsetX;
          this.startY = event.offsetY;  
          this.isActive = true;
-    };
+    };   
+    /**
+    * To capture mouse move event 
+    * @method Track
+    * @param {event} mouse event
+    * @return none
+    */ 
     WindowLevelTool.prototype.Track = function(event)
     {    
         if(!this.isActive)
@@ -648,20 +678,37 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.startY = event.offsetY; 
         this.imageHandler.SetCanvasImage(imageData);
         this.imageHandler.Update();
-       // return imageData;
-    };
+    };         
+    /**
+    * To capture mouse up event 
+    * @method Stop
+    * @param {event} mouse event
+    * @return none
+    **/ 
     WindowLevelTool.prototype.Stop = function(event)
     {
         this.startX = event.offsetX;
         this.startY = event.offsetY;
         this.isActive = false;
     };
-    WindowLevelTool.prototype.Clear = function(event)
-    {
-        this.startX = event.offsetX;
-        this.startY = event.offsetY;
-        this.isActive = false;
-    };
+//     /**
+//     * To Clear wl operation 
+//     * @method Clear
+//     * @param {event} mouse event
+//     * @return none
+//     **/ 
+//    WindowLevelTool.prototype.Clear = function(event)
+//    {
+//        this.startX = event.offsetX;
+//        this.startY = event.offsetY;
+//        this.isActive = false;
+//    };
+ 
+    /**
+    * To Apply colout filters invert hot rainbow hot based on maptoolName value  
+    * @method ChangeColorMap
+    * @return none
+    **/ 
     WindowLevelTool.prototype.ChangeColorMap = function()
     {   
         this.isActive = false;
@@ -682,10 +729,12 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.context.putImageData(imageData, 0, 0);
         this.imageHandler.SetCanvasImage(imageData);
         this.imageHandler.Update(); 
-    };  
+    }; 
+     
     return WindowLevelTool;
   })(); 
-
+    
+  //TODO : find a better logic
   var TransformationTool = (function(){
     function TransformationTool()
     {
@@ -785,6 +834,13 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     return TransformationTool;
   })();   
   
+  /*********************   
+  Summary: To Apply filters like Sobel Sharpener threshold
+  * @class FilterTool
+  * @namespace 
+  * @constructor
+  * @param 
+  **********************/
   var FilterTool = (function()
   {       
     function FilterTool()
@@ -794,6 +850,12 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        this.canvas =null;
        this.imageHandler = null;
     } 
+     /**
+     * To Set ImageHandler's object into current stream 
+     * @method SetImageHandler
+     * @param {handler} ImageHandler object 
+     * @return none
+     */ 
     FilterTool.prototype.SetImageHandler = function(handler)
     {  
       if(handler)
@@ -803,7 +865,12 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.context = this.imageHandler.context;      
         this.canvas = this.imageHandler.canvas; 
       }
-    };    
+    };   
+    /**
+    * To perform Sobel Edge Detection 
+    * @method Sobel
+    * @return none
+    */  
     FilterTool.prototype.Sobel = function()
     {  
       if(!this.viewer)
@@ -825,7 +892,13 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.context.putImageData(imageData, 0, 0);
       this.imageHandler.SetCanvasImage(imageData);
       this.imageHandler.Update();
-    };
+    };   
+        
+    /**
+    * To perform Sharpen the displayed image 
+    * @method Sharpen
+    * @return none
+    */  
     FilterTool.prototype.Sharpen = function()
     {   
       if(!this.viewer)
@@ -840,13 +913,26 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.context.putImageData(imageData, 0, 0);
       this.imageHandler.SetCanvasImage(imageData);
       this.imageHandler.Update();
-    };
+    };     
+    /**
+    * To perform Threshold level filtering
+    * @method Threshold
+    * @return none
+    */  
     FilterTool.prototype.Threshold = function()
-    {
+    {  
+    // TODO : need to a proper scaler to get threshold values
     };
     return FilterTool;                                                                     
-  })();
+  })();            
   
+  /*********************   
+  Summary: To handle and store all the operation related to image
+  * @class ImageHandler
+  * @namespace 
+  * @constructor
+  * @param 
+  **********************/
   var ImageHandler = (function(){
     function ImageHandler()
     {
@@ -869,7 +955,12 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.cacheCanvas = null;   
       this._annotationTool = null;
       this._transformationTool = null;
-    }
+    }        
+     /**
+     * To Set DWV viewer Object 
+     * @method SetViewer
+     * @return none
+     */  
     ImageHandler.prototype.SetViewer = function(viewer)
     {
       if(viewer)
@@ -877,22 +968,42 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           this.viewer = viewer;
           this.image = this.viewer.getImage();
         }
-    };
+    }; 
+     /**
+     * To Set DWV tag Object 
+     * @method SetTag
+     * @return none
+     */  
     ImageHandler.prototype.SetTag = function(tag)
     {
       if(tag)
         {
           this.tag = tag;
         }
-    };
+    };   
+     /**
+     * To get DWV viewer Object 
+     * @method GetViewer
+     * @return viewer Object
+     */ 
     ImageHandler.prototype.GetViewer = function()
     {                                        
       return this.viewer;
-    };
+    }; 
+     /**
+     * To get DWV image Object 
+     * @method Getimage
+     * @return image Objec
+     */ 
     ImageHandler.prototype.Getimage = function()
     {                    
       return this.image;
-    };
+    }; 
+     /**
+     * To Set displaying canvas for the image
+     * @method SetCanvas
+     * @return none 
+     */ 
     ImageHandler.prototype.SetCanvas = function(canvas)
     {                              
       if(canvas)
@@ -901,28 +1012,60 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.context = this.canvas.getContext("2d"); 
         this.toolHandler.SetImageHandler(this);
       }
-    };
+    };  
+    /**
+     * To returns current canvas of the image
+     * @method GetCanvas
+     * @return html canvas object 
+     */ 
     ImageHandler.prototype.GetCanvas = function()
     {                              
       return this.canvas;
     };
+    /**
+     * To Set displaying image for the canvas
+     * @method SetCanvasImage
+     * @return none 
+     */
     ImageHandler.prototype.SetCanvasImage = function(canimg)
     {                              
       this.canvasImage = canimg;
     }; 
-     ImageHandler.prototype.GetCanvasImage = function()
+    /**
+     * To Get displayed image from the canvas
+     * @method GetCanvasImage
+     * @return image(byte array) 
+     */
+    ImageHandler.prototype.GetCanvasImage = function()
     {                              
       return this.canvasImage;
-    };
+    };  
+    /**
+     * To Get Context of canvas
+     * @method GetContext
+     * @return html 2d context obj of canvas
+     */
     ImageHandler.prototype.GetContext = function()
     {
       return this.context;
-    };
+    };  
+     /**
+     * To Set current tools name and parameter e.g.('line','red')
+     * @method SetToolParam
+     * @param {currenttool} toolname 
+     * @param {colour} color or filter name
+     * @return none
+     **/ 
     ImageHandler.prototype.SetToolParam = function(currenttool,colour)
     {                              
       this.currentTool = currenttool; 
       this.currentColour = colour;
     }; 
+    /**
+     * Returns the annotation tool object with current image handler assigned on it
+     * @method GetAnnotationTool
+     * @return annotation tool object
+     */
     ImageHandler.prototype.GetAnnotationTool = function()
     {   
      // this._annotationTool = this.toolHandler.GetAnnotationTool();    
@@ -930,23 +1073,43 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
      this.toolHandler.SetImageHandler(this);
      return  this.toolHandler.GetAnnotationTool(); 
     };
+    /**
+     * Returns the WindowLevel tool object with current image handler assigned on it
+     * @method GetWindowLevelTool
+     * @return WindowLevel tool object
+     */
     ImageHandler.prototype.GetWindowLevelTool = function()
     { 
       this.toolHandler.SetImageHandler(this);
       return this.toolHandler.GetWindowLevelTool();
     };
+     /**
+     * Returns the Filter tool object with current image handler assigned on it
+     * @method GetFilterTool
+     * @return Filter tool object
+     */
     ImageHandler.prototype.GetFilterTool = function()
     {                          
       this.toolHandler.SetImageHandler(this);
       return this.toolHandler.GetFilterTool();
     };
+    /**
+     * Returns the Transformation tool object with current image handler assigned on it
+     * @method GetTransformationTool
+     * @return Transformation tool object
+     */
     ImageHandler.prototype.GetTransformationTool = function()
     { 
      // this._transformationTool = this.toolHandler.GetTransformationTool();
       //return this._transformationTool;  
       this.toolHandler.SetImageHandler(this);
       return this.toolHandler.GetTransformationTool();
-    };
+    };  
+    /**
+     * To displayed dicom image in canvas
+     * @method DrawImage
+     * @return none 
+     */
     ImageHandler.prototype.DrawImage = function()
     {        
       this.canvasImage = this.context.createImageData(this.canvas.width,this.canvas.height);
@@ -962,26 +1125,52 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.cacheCanvas.width = this.canvas.width;
       this.cacheCanvas.height = this.canvas.height;  
     };
+    /**
+     * To reset image in canvas
+     * @method ResetImage
+     * @return none 
+     */
     ImageHandler.prototype.ResetImage = function()
     { 
       this.canvas.width = this.canvas.width
       this.context.putImageData(this.canvasImage, 0, 0);
-    };
+    };   
+     /**
+     * To clear image in canvas
+     * @method Clear
+     * @return none 
+     */
     ImageHandler.prototype.Clear = function()
     { 
-      this.context.width = this.context.width; 
-    };
+      this.canvas.width = this.canvas.width; 
+    };  
+     /**
+     * To reset canvas
+     * @method ResetAll
+     * @return none 
+     */
     ImageHandler.prototype.ResetAll = function()
     { 
       this.context.width = this.context.width
       this.context.setTransform( 1, 0, 0, 1, 0, 0 );     
       this.context.putImageData(this.originalImageData, 0, 0);
     };
+    /**
+     * To reset transformation applied to canvas
+     * @method ResetTrasnformation
+     * @return none 
+     */
     ImageHandler.prototype.ResetTrasnformation = function()
     { 
       this.context.setTransform( 1, 0, 0, 1, 0, 0 );     
       this.context.putImageData(this.canvasImage, 0, 0);
     };
+    /**
+     * To apply current transformation  to canvas
+     * @method ApplyCurrentTransformation
+     * @return none 
+     */   
+     //TODO : need better logic
     ImageHandler.prototype.ApplyCurrentTransformation = function()
     { 
       this.cacheCanvas.getContext("2d").putImageData(this.canvasImage, 0, 0);
@@ -1000,22 +1189,42 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       // [ 0 0 1 ]   
       this.context.setTransform( this.zoomX, 0, 0, this.zoomY, this.orgX, this.orgY);
       this.context.drawImage( this.cacheCanvas, 0, 0 ); 
-    };
+    }; 
+     /**
+     * To clear annotation in the image
+     * @method ClearAnnotation
+     * @return none 
+     */
     ImageHandler.prototype.ClearAnnotation = function()
     {                                     
       this.annotationHistory.length = 0;    
       this.ResetImage();
-    };
+    };  
+     /**
+     * To clear lut applied in the image
+     * @method ClearLut
+     * @return none 
+     */
     ImageHandler.prototype.ClearLut = function()
     { 
       this.ResetImage();
-    };
+    }; 
+    /**
+     * To update image with its history
+     * @method Update
+     * @return none 
+     */
     ImageHandler.prototype.Update = function()
     {                                   
       //this.ApplyCurrentTransformation(); 
      this.GetAnnotationTool().DrawHistory();    
       
-    };  
+    };   
+     /**
+     * To reset and update image with its history
+     * @method ResetAndUpdate
+     * @return none 
+     */
     ImageHandler.prototype.ResetAndUpdate = function()
     {                                   
       //this.ApplyCurrentTransformation(); 
@@ -1023,11 +1232,21 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.GetAnnotationTool().DrawHistory();    
       
     }; 
+    /**
+     * To update image with its previous annotations
+     * @method UpdateAnnotation
+     * @return none 
+     */
     ImageHandler.prototype.UpdateAnnotation = function()
     {                                   
       this.GetAnnotationTool().DrawHistory();    
       
     }; 
+    /**
+     * To retuns tag object with removes of SQ data and in a formate of {Name:'',Value'',TagStr:'(group,element)'}
+     * @method GetFilteredTags
+     * @return displayable Tag object for demographic info 
+     */
     ImageHandler.prototype.GetFilteredTags = function()
     {                                           
      var tagColl = this.tag;
@@ -1046,7 +1265,8 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
             } 
           } 
           return  filteredTags;      
-    };
+    };   
+    //Note:kept for feature
     ImageHandler.prototype.DisposeTool = function()
     {      
     };
@@ -1060,8 +1280,15 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     {
     };
     return ImageHandler;
-  })();    
+  })();
   
+  /*********************   
+  Summary: to handle all the tool operation related to image handler
+  * @class ToolHandler
+  * @namespace 
+  * @constructor
+  * @param 
+  **********************/
   var ToolHandler = (function(){
     function ToolHandler()
     {
@@ -1071,32 +1298,63 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.filterTool = new FilterTool();
       this.transformationTool = new TransformationTool();
     }
+    /**
+    * To Set ImageHandler's object into current stream 
+    * @method SetImageHandler
+    * @param {imagehandler} ImageHandler object 
+    * @return none
+    */ 
     ToolHandler.prototype.SetImageHandler = function(imagehandler)
     {
       if(imagehandler)
        this.imagehandler = imagehandler;
     };
+    /**
+    * Returns the annotation tool object with current image handler assigned on it
+    * @method GetAnnotationTool
+    * @return annotation tool object
+    */
     ToolHandler.prototype.GetAnnotationTool = function()
     {  
       this.annotationTool.SetImageHandler(this.imagehandler);
       return this.annotationTool;
     };
+    /**
+    * Returns the WindowLevel tool object with current image handler assigned on it
+    * @method GetWindowLevelTool
+    * @return WindowLevel tool object
+    */
     ToolHandler.prototype.GetWindowLevelTool = function()
     { 
       this.windowLevelTool.SetImageHandler(this.imagehandler);
       return this.windowLevelTool ;
     };
+    /**
+    * Returns the Filter tool object with current image handler assigned on it
+    * @method GetFilterTool
+    * @return Filter tool object
+    */
     ToolHandler.prototype.GetFilterTool = function()
     {  
       this.filterTool.SetImageHandler(this.imagehandler);                        
       return this.filterTool ;
     };
+    /**
+    * Returns the Transformation tool object with current image handler assigned on it
+    * @method GetTransformationTool
+    * @return Transformation tool object
+    */
     ToolHandler.prototype.GetTransformationTool = function()
     { 
       this.transformationTool.SetImageHandler(this.imagehandler);                        
       return this.transformationTool ;
     }; 
     var instence = null
+    /**
+    * Returns single instence of ToolHandler
+    * @method GetInstence
+    * @return ToolHandler object
+    */ 
     ToolHandler.GetInstence = function()
     {
       if(!instence)  
@@ -1105,7 +1363,14 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     }
    return ToolHandler;
   })();
-  
+
+  /*********************   
+  Summary: To handle File Api of html and maintain collection of all files and related onjects to it
+  * @class FileHandler
+  * @namespace 
+  * @constructor
+  * @param 
+  **********************/
   var FileHandler = (function(){
     function FileHandler()
     {
@@ -1115,14 +1380,28 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.parentElement = null;
         this.callBack = null;
         this.index = 0;
-    }      
+    }
+    /**
+    * To Set elements need to process
+    * @method SetElements
+    * @param {canvas} canvas on which image will be drawn  
+    * @param {parentElement} parent element of canvas 
+    * @param {callback} callback funcation to be called after a file is been loaded 
+    * @return none
+    */ 
     FileHandler.prototype.SetElements = function(canvas,parentElement,callback)
     {                   
         this.canvas = canvas;
         this.context = canvas.getContext("2d");  
         this.parentElement = parentElement;
         this.callBack = callback;
-    };  
+    };
+    /**
+    * To initialize the objects as per the number of file selected
+    * @method Initialize
+    * @param {fileApiObjArray} file object array from file change evet   
+    * @return none
+    */  
     FileHandler.prototype.Initialize = function(fileApiObjArray)
     {    
       this.index = 0;
@@ -1134,7 +1413,13 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         file.ImageHandler = new ImageHandler();
         this.fileList.push(file); 
       }
-    };        
+    };
+    /**
+    * To load current file in canvas
+    * @method LoadFile
+    * @param {fileListObj} required file object to be loaded   
+    * @return none
+    */      
     FileHandler.prototype.LoadFile = function(fileListObj)
     {                   
         var reader = new FileReader();  
@@ -1177,6 +1462,12 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       };
       reader.readAsArrayBuffer(fileListObj.FileObj); 
     };
+    /**
+    * To Display the file from given index
+    * @method SetDisplayFile
+    * @param {index} index of required file needed to be loaded  
+    * @return none
+    */ 
     FileHandler.prototype.SetDisplayFile = function(index)
     { 
       this.index = index;
@@ -1195,20 +1486,42 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         imghandler.ResetAndUpdate(); 
       }
     };
+    /**
+    * Returns current loaded file's index
+    * @method GetCurrentIndex
+    * @return index(number)
+    */ 
     FileHandler.prototype.GetCurrentIndex = function(index)
     { 
        return this.index;                  
-    };   
+    };
+    /**
+    * Returns current loaded file's imagehandler object
+    * @method GetCurrentImageHandler
+    * @param {index} index of required file's handler needed
+    * @return imagehandler object
+    */    
     FileHandler.prototype.GetCurrentImageHandler = function(index)
     { 
       return this.fileList[this.index].ImageHandler;
-    };        
+    };
+    /**
+    * Class to store the files objects required  
+    * @class fileParam
+    * @param none
+    * @return none
+    */         
     var fileParam = function(){
       this.FileObj = null;
       this.ImageHandler = null;
-    };  
-     
+    };
+
     var instence = null
+    /**
+    * Returns single instence of FileHandler
+    * @method GetInstence
+    * @return FileHandler object
+    */ 
     FileHandler.GetInstence = function()
     {
       if(!instence)  

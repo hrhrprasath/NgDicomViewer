@@ -279,7 +279,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
      * @param {event} mouse event
      * @return none
      */ 
-    AnnotationTools.prototype.Track = function(event,imageData)
+    AnnotationTools.prototype.Track = function(event)
     {
         if(!this.isToolActive)
              return;

@@ -1,3 +1,5 @@
+///TODO:better testing spec with url file support since local file loading is abandoned 
+
 describe("Annotation Tools", function () {
     var imageHandler, Tool;
     imageHandler = new ImageHandler();

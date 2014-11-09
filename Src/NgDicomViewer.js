@@ -7,7 +7,8 @@ ngDicomViewer.controller('dicomcontroller',function($scope,$rootScope,$document,
      $scope.Colours =['red','lime', 'blue', 'yellow','orange', 'aqua', 'fuchsia', 'white', 'black',           
      'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];  
      $scope.SelectedColor = 'red';
-     $scope.SelectedTool = "line";
+     $scope.SelectedTool = "line";     
+     $scope.RemoteFile = false;
   });
 ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
   {  

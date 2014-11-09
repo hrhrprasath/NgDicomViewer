@@ -78,7 +78,8 @@ ul{
   margin:0;
   left: 5%;
   position:absolute; 
-  line-height: .6em;
+  line-height: .6em; 
+  width:95%
 }
 .canvousdiv{
   top:10.2%;

@@ -41,7 +41,10 @@
              <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li><br>
          <li><span>Color    :</span>
              <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li><br>     
-         <li><input  id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li><br>
+         <li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
+         <li><input ng-hide='RemoteFile' id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li><br>
+         <li><input ng-show='RemoteFile' class = "optionbtn"style = "width:80%" type="text" id="urlsList" /><br></li> 
+         <li><input ng-show="RemoteFile" class = "optionbtn" type="button" value="OpenUrls" id="openurlbtn" /><br></li> 
      <!--    <li><input  id="tagbtn" class = "optionbtn" type="button" value="Tag" /></li><br>  -->
          <li><input ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'" class = "optionbtn" type="button" value="Apply" id="applybtn" /></li><br>
          <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li><br>

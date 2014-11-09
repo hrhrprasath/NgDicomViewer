@@ -163,7 +163,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           
           filehandler = FileHandler.GetInstence();  
           filehandler.SetElements(angularCanvas[0],element[0],fileChangeUpdate);
-          filehandler.Initialize(filesArray);
+          filehandler.InitializeFiles(filesArray);
           filehandler.SetDisplayFile(0);
           imagehandler =filehandler.GetCurrentImageHandler();
        }
@@ -172,6 +172,17 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        
        ///@End Of Dicom File Handling---------->      
        
+       ///Remote Dicom File Handleing----------------< 
+       var RemoteFileLoad = function()
+       {
+          filehandler = FileHandler.GetInstence();
+          filehandler = FileHandler.GetInstence();  
+          filehandler.SetElements(angularCanvas[0],element[0],fileChangeUpdate);
+          filehandler.InitializeRemoteFiles(["http://x.babymri.org/?53320924&.dcm"]);
+          filehandler.SetDisplayFile(0);
+          imagehandler =filehandler.GetCurrentImageHandler();
+       }
+       ///@End Of remote Dicom File Handling---------->   
        ///@Clear All--------< 
         var clearButton = angular.element(document.getElementById( attrs["clearbuttonid"]));
         var clear = function()
@@ -186,7 +197,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
                 });
           tags =null;  
           if(angularCanvas)
-             angularCanvas[0].width = angularCanvas[0].width;  
+             angularCanvas[0].width = angularCanvas[0].width; 
+           //temp load reote file on clear button
+           RemoteFileLoad();     
         }
         if(clearButton)
           clearButton.bind('click',clear);     
@@ -1379,7 +1392,8 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         this.context = null;
         this.parentElement = null;
         this.callBack = null;
-        this.index = 0;
+        this.index = 0;     
+        this.remoteFile = false
     }
     /**
     * To Set elements need to process
@@ -1398,20 +1412,40 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     };
     /**
     * To initialize the objects as per the number of file selected
-    * @method Initialize
+    * @method InitializeFiles
     * @param {fileApiObjArray} file object array from file change evet   
     * @return none
     */  
-    FileHandler.prototype.Initialize = function(fileApiObjArray)
+    FileHandler.prototype.InitializeFiles = function(fileApiObjArray)
     {    
       this.index = 0;
-      this.fileList.length = 0;               
+      this.fileList.length = 0;
+      this.remoteFile  = false;              
       for(var i=0,length =fileApiObjArray.length;i<length;i++ )
       {
         var file = new fileParam();
         file.FileObj = fileApiObjArray[i];
         file.ImageHandler = new ImageHandler();
         this.fileList.push(file); 
+      }
+    };  
+     /**
+    * To initialize the objects as per the number of file selected
+    * @method InitializeRemotetFiles
+    * @param {urlarray} file object array from file change evet   
+    * @return none
+    */  
+    FileHandler.prototype.InitializeRemoteFiles = function(urlarray)
+    {    
+      this.index = 0;
+      this.fileList.length = 0; 
+      this.remoteFile = true;              
+      for(var i=0,length =urlarray.length;i<length;i++ )
+      {
+        var urlObj = new urlParam();
+        urlObj.Url = urlarray[i];
+        urlObj.ImageHandler = new ImageHandler();
+        this.fileList.push(urlObj); 
       }
     };
     /**
@@ -1461,6 +1495,49 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
          } 
       };
       reader.readAsArrayBuffer(fileListObj.FileObj); 
+    };       
+    
+     /**
+    * To load current file in canvas
+    * @method LoadRemoteFile
+    * @param {fileListObj} required file object to be loaded   
+    * @return none
+    */      
+    FileHandler.prototype.LoadRemoteFile = function(fileListObj)
+    {                   
+        var reader = new FileReader();  
+        var canvas = this.canvas;
+        var parentElement = this.parentElement   
+        var callback =this.callBack; 
+        
+        var request = new XMLHttpRequest();
+        var url = fileListObj.Url;
+        request.open('GET', url, true);
+        request.responseType = "arraybuffer"; 
+        request.onload = function(/*event*/) {
+//         var data = dwv.image.getDataFromDicomBuffer(request.response);
+          var dicomParser = new dwv.dicom.DicomParser();
+          // parse the buffer
+          dicomParser.parse(request.response);  
+          //image.view object
+          view = dicomParser.createImage();  
+          tags = dicomParser.dicomElements;
+          var img=view.getImage(); 
+          var size =img.getSize();  
+          canvas.width = size.getNumberOfColumns();
+          canvas.height = size.getNumberOfRows();
+          
+          parentElement.style.width = (canvas.width) +'px';
+          parentElement.style.height = (canvas.height)+'px';
+          
+          fileListObj.ImageHandler.SetViewer(view);
+          fileListObj.ImageHandler.SetTag(tags);
+          fileListObj.ImageHandler.SetCanvas(canvas);
+          fileListObj.ImageHandler.DrawImage(); 
+          if(callback)
+            callback();
+        };      
+        request.send(null);
     };
     /**
     * To Display the file from given index
@@ -1472,8 +1549,13 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
     { 
       this.index = index;
       var imghandler =this.fileList[this.index].ImageHandler;
-      if(!imghandler.GetCanvasImage())                   
-        this.LoadFile(this.fileList[this.index]);
+      if(!imghandler.GetCanvasImage()) 
+      {                  
+        if(!this.remoteFile)
+          this.LoadFile(this.fileList[this.index]); 
+        else
+          this.LoadRemoteFile(this.fileList[this.index]);
+      }
       else   
       {  
         var img=imghandler.Getimage(); 
@@ -1515,7 +1597,17 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
       this.FileObj = null;
       this.ImageHandler = null;
     };
-
+    /**
+    * Class to store the remort files objects required  
+    * @class urlParam
+    * @param none
+    * @return none
+    */         
+    var urlParam = function(){
+      this.Url = null;
+      this.ImageHandler = null;    
+      this.DataArray = null;
+    };
     var instence = null
     /**
     * Returns single instence of FileHandler

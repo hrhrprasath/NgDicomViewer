@@ -146,7 +146,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        angularCanvas.bind('mousewheel',mouseWheel);
         ///@End of Shapes------------------------------------->
         
-        ///Dicom File Handleing----------------<
+        ///Dicom File Handling----------------<
        var fileUtilityElement = angular.element(document.getElementById(attrs["fileutilityid"]));  
        var fileChangeUpdate = function(){
           scope.$apply(function () {
@@ -173,7 +173,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        
        ///@End Of Dicom File Handling---------->      
      
-       ///Remote Dicom File Handleing----------------< 
+       ///Remote Dicom File Handling----------------< 
        var urlList = angular.element(document.getElementById(attrs["urllistid"])); 
        var openUrlBtn = angular.element(document.getElementById(attrs["urlopenbtnid"])); 
 
@@ -188,8 +188,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           imagehandler =filehandler.GetCurrentImageHandler();
        }
        if(openUrlBtn)
-          openUrlBtn.bind('click',RemoteFileLoad);  
+          openUrlBtn.bind('click',RemoteFileLoad);
        ///@End Of remote Dicom File Handling---------->   
+
        ///@Clear All--------< 
         var clearButton = angular.element(document.getElementById( attrs["clearbuttonid"]));
         var clear = function()
@@ -209,9 +210,9 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
         }
         if(clearButton)
           clearButton.bind('click',clear);     
-       ///@End of Claear all------->   
+       ///@End of Clear all------->   
        
-       ///@Clear Annoatation--------< 
+       ///@Clear Annotation--------< 
        var clearAnnotationBtn = angular.element(document.getElementById( attrs["clearannotationbuttonid"]));
        var clearAnnotation = function()
        {
@@ -219,7 +220,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        }     
        if(clearAnnotationBtn)
           clearAnnotationBtn.bind('click',clearAnnotation);
-       ///@End of Claear all------->    
+       ///@End of Clear all------->    
 
       }
     };

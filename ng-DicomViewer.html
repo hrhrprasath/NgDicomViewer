@@ -36,19 +36,19 @@
     <div ng-show = "optionState" class = "displaydiv" style="top:6.2%;left: 0%;width: 20%;height: 87.1%;position: absolute">
       <ul>            
       <!--style="text-align: center;left: 25%;width:50%;position: absolute"-->
-         <li><br><span>OPTIONS</span></li><hr>
+         <li><br/><span>OPTIONS</span></li><hr>
          <li><span>Tools :</span>
-             <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li><br>
+             <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
          <li><span>Color    :</span>
-             <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li><br>     
+             <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li>     
          <li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
-         <li><input ng-hide='RemoteFile' id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li><br>
-         <li><input ng-show='RemoteFile' class = "optionbtn"style = "width:80%" type="text" id="urlsList" /><br></li> 
-         <li><input ng-show="RemoteFile" class = "optionbtn" type="button" value="OpenUrls" id="openurlbtn" /><br></li> 
-     <!--    <li><input  id="tagbtn" class = "optionbtn" type="button" value="Tag" /></li><br>  -->
-         <li><input ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'" class = "optionbtn" type="button" value="Apply" id="applybtn" /></li><br>
-         <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li><br>
-         <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li><br> 
+         <li  ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
+         <li ng-show="RemoteFile" ><input class = "optionbtn" style = "width:80%" type="text" id="urlsList" /></li> 
+         <li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li> 
+     <!--    <li><input  id="tagbtn" class = "optionbtn" type="button" value="Tag" /></li>  -->
+         <li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>
+         <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li>
+         <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li> 
       </ul> 
     </div>    
     <div class = "displaydiv" ng-show = "tagState" id ="tagdiv" style="top:6.2%;left: 65%;width: 34.6%;height: 86.6%;position: absolute ;z-index: 50;overflow: auto;line-height: 15px;padding: 0.2%">

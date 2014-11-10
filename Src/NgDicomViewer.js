@@ -205,8 +205,7 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
           tags =null;  
           if(angularCanvas)
              angularCanvas[0].width = angularCanvas[0].width; 
-           //temp load reote file on clear button
-           RemoteFileLoad();     
+   
         }
         if(clearButton)
           clearButton.bind('click',clear);     

@@ -31,7 +31,7 @@
       <input id="tagbtn" ng-init = "tagState =false;"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" />
     </header>
     <div class = "canvousdiv">
-      <dicomviewer clearbuttonid="clrbtn" clearannotationbuttonid = "clrann" tool={{SelectedTool}} colour={{SelectedColor}} fileutilityid ="fileinput" tagdivid="tagdiv" tagbuttonid="tagbtn" applybtnid="applybtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer> 
+      <dicomviewer clearbuttonid="clrbtn" clearannotationbuttonid = "clrann" tool={{SelectedTool}} colour={{SelectedColor}} fileutilityid ="fileinput" tagdivid="tagdiv" tagbuttonid="tagbtn" applybtnid="applybtn" urllistid = "urlsList" urlopenbtnid ="openurlbtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer> 
     </div> 
     <div ng-show = "optionState" class = "displaydiv" style="top:6.2%;left: 0%;width: 20%;height: 87.1%;position: absolute">
       <ul>            
@@ -43,7 +43,7 @@
              <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li>     
          <li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
          <li  ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
-         <li ng-show="RemoteFile" ><input class = "optionbtn" style = "width:80%" type="text" id="urlsList" /></li> 
+         <li ng-show="RemoteFile" >URLS:<input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li> 
          <li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li> 
      <!--    <li><input  id="tagbtn" class = "optionbtn" type="button" value="Tag" /></li>  -->
          <li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>

@@ -172,17 +172,23 @@ ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope)
        fileUtilityElement.bind('change',onFileListChanged); 
        
        ///@End Of Dicom File Handling---------->      
-       
+     
        ///Remote Dicom File Handleing----------------< 
+       var urlList = angular.element(document.getElementById(attrs["urllistid"])); 
+       var openUrlBtn = angular.element(document.getElementById(attrs["urlopenbtnid"])); 
+
        var RemoteFileLoad = function()
        {
           filehandler = FileHandler.GetInstence();
           filehandler = FileHandler.GetInstence();  
           filehandler.SetElements(angularCanvas[0],element[0],fileChangeUpdate);
-          filehandler.InitializeRemoteFiles(["http://x.babymri.org/?53320924&.dcm"]);
+          var list = (urlList[0].value).split(';');
+          filehandler.InitializeRemoteFiles(list);//["http://x.babymri.org/?53320924&.dcm"]
           filehandler.SetDisplayFile(0);
           imagehandler =filehandler.GetCurrentImageHandler();
        }
+       if(openUrlBtn)
+          openUrlBtn.bind('click',RemoteFileLoad);  
        ///@End Of remote Dicom File Handling---------->   
        ///@Clear All--------< 
         var clearButton = angular.element(document.getElementById( attrs["clearbuttonid"]));

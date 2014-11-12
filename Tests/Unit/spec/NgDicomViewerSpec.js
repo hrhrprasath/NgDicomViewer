@@ -56,7 +56,7 @@ describe("Annotation Tools", function () {
     it("Step4: Checking for tool HistoryTrack", function () {
         Tool.DrawHistory();
         expect(Tool.context).toBeDefined();
-       });
+    });
 });
 
 describe("WindowLevel Tool", function () {
@@ -70,7 +70,7 @@ describe("WindowLevel Tool", function () {
     imageHandler.canvas = canvas;
     imageHandler.currentTool = "rainbow";
     imageHandler.canvasImage = imageHandler.context.getImageData(0, 0, canvas.width, canvas.height);
-    
+
     it("Step1: Checking for Object Asssiginments", function () {
         Tool.SetImageHandler(imageHandler);
         expect(Tool).toBeDefined();
@@ -110,7 +110,7 @@ describe("FilterTool Tool", function () {
     imageHandler.context = canvas.getContext("2d");
     imageHandler.canvas = canvas;
     imageHandler.canvasImage = imageHandler.context.getImageData(0, 0, canvas.width, canvas.height);
-   
+
     it("Step1: Checking for Object Asssiginments", function () {
         Tool.SetImageHandler(imageHandler);
         expect(Tool).toBeDefined();
@@ -181,7 +181,7 @@ describe("ToolHandler", function () {
     imageHandler.canvas = canvas;
     imageHandler.currentTool = "rainbow";
     imageHandler.canvasImage = imageHandler.context.getImageData(0, 0, canvas.width, canvas.height);
-   
+
     it("Step1: Checking for Object Asssiginments", function () {
         var tagObj = {}
         tagObj.PixelSpacing = 1;

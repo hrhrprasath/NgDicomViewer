@@ -1,16 +1,74 @@
-///TODO:better testing spec with url file support since local file loading is abandoned 
+///TODO:better testing spec with url file support since local file loading is abandoned
+var imgHandler; //to store the downloaded image
+
+describe("FileHandler", function () {
+    var handler, imageHandler;
+    handler = FileHandler.GetInstence();
+    var canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    var parentElement = document.createElement('div');
+    //we cant check for local fie directly
+    var filobjarr = ["file1", "file2"];
+    var urlArray = ["http://x.babymri.org/?53320924&.dcm"];
+    var context = canvas.getContext("2d");
+    it("Step1: Checking for Object Asssiginments and Initialzation", function () {
+        expect(handler).toBeDefined();
+        handler.SetElements(canvas, parentElement, function () { });
+        handler.InitializeFiles(filobjarr);
+        expect(handler.fileList.length).toEqual(2);
+        expect(handler.fileList[0].FileObj).toEqual("file1");
+        expect(handler.fileList[0].ImageHandler).toBeDefined();
+        expect(handler.fileList[1].FileObj).toEqual("file2");
+        expect(handler.fileList[1].ImageHandler).toBeDefined();
+    });
+    it("Step2: Checking for Remotefile Initialzation", function () {
+        expect(handler).toBeDefined();
+        handler.SetElements(canvas, parentElement, function () { });
+        handler.InitializeRemoteFiles(urlArray);
+        expect(handler.fileList.length).toEqual(1);
+        expect(handler.fileList[0].Url).toEqual(urlArray[0]);
+        expect(handler.fileList[0].ImageHandler).toBeDefined();
+    });
+    it("Step3: Checking for DisplayFuncations", function () {
+        //        var obj = { 'testName': 'Viewer' }
+        //        imgobj = {};
+        //        sizeobj = {};
+        //        sizeobj.getNumberOfColumns = function () { return 512; };
+        //        sizeobj.getNumberOfRows = function () { return 512; };
+        //        imgobj.getSize = function () { return sizeobj; };
+        //        obj.getImage = function () { return imgobj; };
+        var onfileDownloaded = function () {
+            expect(handler.DataArray).not.toBeNull();
+            imgHandler = handler.fileList[0].ImageHandler;
+            expect(imgHandler.GetCanvasImage().Width).toEqual(256);
+            expect(imgHandler.GetCanvasImage().Height).toEqual(256);
+        }
+        handler.fileList[0].ImageHandler.canvas = canvas;
+        handler.callBack = onfileDownloaded;
+        //handler.fileList[0].ImageHandler.canvasImage = context.getImageData(0, 0, canvas.width, canvas.height);
+        //handler.fileList[0].ImageHandler.SetViewer(obj);
+        handler.SetDisplayFile(0);
+        expect(handler.GetCurrentIndex()).toEqual(0);
+
+
+    });
+
+});
 
 describe("Annotation Tools", function () {
     var imageHandler, Tool;
     imageHandler = new ImageHandler();
     Tool = new AnnotationTools();
-    var canvas = document.createElement('canvas');
+    imageHandler.currentTool = "line";
+    imageHandler.currentColour = "blue";
+	var canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
     imageHandler.context = canvas.getContext("2d");
     imageHandler.canvas = canvas;
-    imageHandler.currentTool = "line";
-    imageHandler.currentColour = "blue";
+    imageHandler.canvasImage = imageHandler.context.getImageData(0, 0, canvas.width, canvas.height);
+
     imageHandler.canvasImage = imageHandler.context.getImageData(0, 0, canvas.width, canvas.height);
     imageHandler.tag = { 'PixelSpacing': 1 };
 
@@ -203,44 +261,3 @@ describe("ToolHandler", function () {
 });
 
 
-describe("FileHandler", function () {
-    var handler, imageHandler;
-    handler = FileHandler.GetInstence();
-    var canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    var parentElement = document.createElement('div');
-    var filobjarr = ["file1", "file2"];
-    var context = canvas.getContext("2d");
-    it("Step1: Checking for Object Asssiginments and Initialzation", function () {
-        expect(handler).toBeDefined();
-        handler.SetElements(canvas, parentElement, function () { });
-        handler.Initialize(filobjarr);
-        expect(handler.fileList.length).toEqual(2);
-        expect(handler.fileList[0].FileObj).toEqual("file1");
-        expect(handler.fileList[0].ImageHandler).toBeDefined();
-        expect(handler.fileList[1].FileObj).toEqual("file2");
-        expect(handler.fileList[1].ImageHandler).toBeDefined();
-    });
-
-    it("Step2: Checking for DisplayFuncations", function () {
-        var obj = { 'testName': 'Viewer' }
-        imgobj = {};
-        sizeobj = {};
-        sizeobj.getNumberOfColumns = function () { return 512; };
-        sizeobj.getNumberOfRows = function () { return 512; };
-        imgobj.getSize = function () { return sizeobj; };
-        obj.getImage = function () { return imgobj; };
-        handler.fileList[0].ImageHandler.canvas = canvas;
-        handler.fileList[0].ImageHandler.canvasImage = context.getImageData(0, 0, canvas.width, canvas.height);
-        handler.fileList[0].ImageHandler.SetViewer(obj);
-        handler.fileList[1].ImageHandler.canvas = canvas;
-        handler.fileList[1].ImageHandler.canvasImage = context.getImageData(0, 0, canvas.width, canvas.height);
-        handler.fileList[1].ImageHandler.SetViewer(obj);
-        handler.SetDisplayFile(0);
-        expect(handler.GetCurrentIndex()).toEqual(0);
-        handler.SetDisplayFile(1);
-        expect(handler.GetCurrentIndex()).toEqual(1);
-    });
-
-});

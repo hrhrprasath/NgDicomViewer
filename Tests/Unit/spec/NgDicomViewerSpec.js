@@ -1,6 +1,4 @@
-///TODO:better testing spec with url file support since local file loading is abandoned
 var imgHandler; //to store the downloaded image
-
 describe("FileHandler", function () {
     var handler, imageHandler;
     handler = FileHandler.GetInstence();
@@ -162,7 +160,8 @@ describe("Annotation Tools", function () {
 describe("WindowLevel Tool", function () {
     var imageHandler, Tool;
     Tool = new WindowLevelTool();
-    
+    var ww;
+    var wc;
     it("Step1: Checking for Object Asssiginments", function () {
         imageHandler =imgHandler;
 		imageHandler.currentTool = "rainbow";
@@ -172,18 +171,34 @@ describe("WindowLevel Tool", function () {
         expect(Tool.canvas).toEqual(imageHandler.canvas);
     });
 
+
     it("Step2: Checking for tool Began", function () {
         var event = document.createElement('event');
         event.offsetX = 10;
         event.offsetY = 20;
         Tool.Start(event);
+        ww = imageHandler.GetViewer().getWindowLut().getWidth();
+        wc = imageHandler.GetViewer().getWindowLut().getCenter();
         expect(Tool.isActive).toBeTruthy();
         expect(Tool.startX).toEqual(10);
         expect(Tool.startY).toEqual(20);
-        expect(Tool.maptoolName).toEqual("rainbow");
+    });
+	
+    it("Step3: Checking for tool move", function () {
+        var event = document.createElement('event');
+        event.offsetX = 21;
+        event.offsetY = 32;
+        Tool.Track(event);
+        var wtw =imageHandler.GetViewer().getWindowLut().getWidth();
+        var wtc =imageHandler.GetViewer().getWindowLut().getCenter();
+        expect(Tool.isActive).toBeTruthy();
+        expect(wtw).not.toEqual(ww);
+        expect(wtc).not.toEqual(wc);
+
+       
     });
 
-    it("Step3: Checking for tool End", function () {
+    it("Step4: Checking for tool End", function () {
         var event = document.createElement('event');
         event.offsetX = 100;
         event.offsetY = 200;
@@ -191,6 +206,13 @@ describe("WindowLevel Tool", function () {
         Tool.Stop(event);
         expect(Tool.isActive).not.toBeTruthy();
     });
+
+    it("Step5: Checking for Lut Tool", function () {
+        expect(Tool.maptoolName).toEqual("rainbow");
+        Tool.ChangeColorMap();
+    });
+
+
 
 });
 
@@ -209,14 +231,12 @@ describe("FilterTool Tool", function () {
 
     it("Step2: Checking for Sobel", function () {
         expect(Tool.Sobel).toBeDefined();
+        Tool.Sobel();
     });
 
     it("Step3: Checking for Sharpen", function () {
         expect(Tool.Sharpen).toBeDefined();
+        Tool.Sharpen();
     });
 
 });
-
-
-
-

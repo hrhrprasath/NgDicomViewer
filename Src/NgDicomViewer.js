@@ -174,7 +174,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             ///@Clear All--------< 
             var clearButton = angular.element(document.getElementById(attrs["clearbuttonid"]));
             var clear = function () {
-                imageData = null;
+                imagehandler = null;
                 scope.$apply(function () {
                     $rootScope.Tag = [];
                     $rootScope.PatientName = "";

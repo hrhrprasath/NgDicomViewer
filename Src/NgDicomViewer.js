@@ -2,12 +2,13 @@
 var dwv = dwv || {};
 dwv.dicom = dwv.dicom || {};
 ngDicomViewer.controller('dicomcontroller', function ($scope, $rootScope, $document, $window) {
-    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel"];
+    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold"];
     $scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
      'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
     $scope.SelectedColor = 'red';
     $scope.SelectedTool = "line";
-    $scope.RemoteFile = false;
+    $scope.RemoteFile = false;     
+   
 });
 ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope) {
     return {
@@ -26,7 +27,10 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             //@ tools and Shapes part-------------------<
             var currentShape = attrs["tool"];
             var currentColour = attrs["colour"];
-            $rootScope.Tag = [];
+            $rootScope.Tag = []; 
+
+            $rootScope.Rmin = 0;
+            $rootScope.Rmax = 100;
             var view = null;
             var filehandler = null
             var imagehandler = null;
@@ -43,6 +47,11 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                 }
                 if (attrs["tool"] == "sobel") {
                     imagehandler.GetFilterTool().Sobel();
+                }    
+                if (attrs["tool"] == "threshold") {       
+//                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
+//                    imagehandler.thresholdRange.max = parseInt($rootScope.Tmax);
+                    imagehandler.GetFilterTool().Threshold();
                 }
             };
 
@@ -86,7 +95,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     imagehandler.GetWindowLevelTool().Stop(event);
                     scope.$apply(function () {
                         $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
-                        $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
+                        $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();   
                     });
                 }
             }
@@ -136,7 +145,11 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     $rootScope.PatientName = imagehandler.tag.PatientName.value.toString();
                     $rootScope.PatientId = imagehandler.tag.PatientID.value.toString();
                     $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
-                    $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
+                    $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();   
+                    $rootScope.Rmin =imagehandler.GetViewer().getImage().getDataRange().min; 
+                    $rootScope.Rmax =imagehandler.GetViewer().getImage().getDataRange().max; 
+                    $rootScope.Tval = imagehandler.thresholdRange;
+                    
                 });
             };
             var onFileListChanged = function (event) {
@@ -180,7 +193,9 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     $rootScope.PatientName = "";
                     $rootScope.PatientId = "";
                     $rootScope.WWidth = "";
-                    $rootScope.WCenter = "";
+                    $rootScope.WCenter = ""; 
+                    $rootScope.Rmin =0; 
+                    $rootScope.Rmax =100; 
                 });
                 tags = null;
                 if (angularCanvas)
@@ -864,7 +879,27 @@ var FilterTool = (function () {
     * @return none
     */
     FilterTool.prototype.Threshold = function () {
-        // TODO : need to a proper scaler to get threshold values
+        // TODO : need to a proper scaler to get threshold values     
+       if (!this.viewer)
+          return false;       
+       var imageMin= this.viewer.getImage().getDataRange().min;
+       var min = this.imageHandler.thresholdRange.min;  
+       var max = this.imageHandler.thresholdRange.max;  
+       var threshFunction = function(value){
+          if(value<min||value>max) {
+              return imageMin;
+          }
+          else {
+              return value;
+          }
+        };
+      var image =  this.viewer.getImage().transform( threshFunction );
+      var imageData = this.context.createImageData(this.canvas.width, this.canvas.height);
+      this.viewer.setImage(image);
+      this.viewer.generateImageData(imageData);
+      this.context.putImageData(imageData, 0, 0);
+      this.imageHandler.SetCanvasImage(imageData);
+      this.imageHandler.Update();
     };
     return FilterTool;
 })();
@@ -894,7 +929,8 @@ var ImageHandler = (function () {
         this.orgY = 0;
         this.zoomX = 1;
         this.zoomY = 1;
-        this.cacheCanvas = null;
+        this.cacheCanvas = null;   
+        this.thresholdRange={min:0,max:100}
         this._annotationTool = null;
         this._transformationTool = null;
     }

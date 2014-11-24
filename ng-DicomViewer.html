@@ -39,14 +39,16 @@
          <li><br/><span>OPTIONS</span></li><hr>
          <li><span>Tools :</span>
              <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
-         <li><span>Color    :</span>
+         <li ng-show="SelectedTool == 'circle'||SelectedTool == 'line'||SelectedTool == 'rectangular'||SelectedTool == 'ellipse'"><span>Color    :</span>
              <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li>     
          <li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
-         <li  ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
+         <li ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
          <li ng-show="RemoteFile" >URLS:<input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li> 
          <li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li> 
-     <!--    <li><input  id="tagbtn" class = "optionbtn" type="button" value="Tag" /></li>  -->
-         <li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>
+         <li ng-show="SelectedTool == 'threshold'">
+              <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.min" /><br>
+              <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.max" /></li>
+         <li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'||SelectedTool == 'threshold'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>
          <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li>
          <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li> 
       </ul> 

@@ -2,7 +2,7 @@
 var dwv = dwv || {};
 dwv.dicom = dwv.dicom || {};
 ngDicomViewer.controller('dicomcontroller', function ($scope, $rootScope, $document, $window) {
-    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold"];
+    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image"];
     $scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
      'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
     $scope.SelectedColor = 'red';
@@ -48,6 +48,9 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                 if (attrs["tool"] == "sobel") {
                     imagehandler.GetFilterTool().Sobel();
                 }    
+                if (attrs["tool"] == "reset image") {
+                    imagehandler.ResetAll();
+                } 
                 if (attrs["tool"] == "threshold") {       
 //                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
 //                    imagehandler.thresholdRange.max = parseInt($rootScope.Tmax);
@@ -1076,9 +1079,8 @@ var ImageHandler = (function () {
         this.viewer.generateImageData(this.canvasImage);
         this.context.putImageData(this.canvasImage, 0, 0);
         if (!this.originalImageData) {
-            var orgimg = this.context.createImageData(this.canvas.width, this.canvas.height);
-            this.viewer.generateImageData(this.canvasImage);
-            this.originalImageData = orgimg;
+            this.originalImageData = this.context.createImageData(this.canvas.width, this.canvas.height);
+            this.viewer.generateImageData(this.originalImageData);
         }
         this.cacheCanvas = document.createElement("canvas");
         this.cacheCanvas.width = this.canvas.width;
@@ -1107,9 +1109,10 @@ var ImageHandler = (function () {
     * @return none 
     */
     ImageHandler.prototype.ResetAll = function () {
-        this.context.width = this.context.width
+        this.canvas.width = this.canvas.width
         this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.context.putImageData(this.originalImageData, 0, 0);
+        this.context.putImageData(this.originalImageData, 0, 0);  
+        this.annotationHistory.length=0;
     };
     /**
     * To reset transformation applied to canvas

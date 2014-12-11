@@ -1112,7 +1112,8 @@ var ImageHandler = (function () {
         this.canvas.width = this.canvas.width
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         this.context.putImageData(this.originalImageData, 0, 0);  
-        this.annotationHistory.length=0;
+        this.annotationHistory.length=0;        
+        this.canvasImage = this.context.getImageData(0,0,this.canvas.width, this.canvas.height);
     };
     /**
     * To reset transformation applied to canvas

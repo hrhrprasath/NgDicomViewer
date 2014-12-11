@@ -23,13 +23,16 @@
     
      <link rel="stylesheet" type="text/css" href="Style.css">
   </head>
-  <body  oncontextmenu="return false;"> 
+  <body  oncontextmenu="return false;"  ng-init = "tagState =false;"> 
     <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller"  style="top:0%;left: 0%;width: 99.8%;height: 100%;padding: 0px; position: absolute">
     <header class ="displaydiv" style="top:0%;left: 0%;width: 100%;height: 6%;position: absolute"> 
      <input ng-init = "optionState =false;"  ng-click = "optionState = !optionState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':optionState}"type="button" value="=" />
       <span style="top:0%;left: 25%;width: 50%;height: 100%; margin:.3%;text-align: center;font-size: 2em; position: absolute"> Ng - DicomViewer </span>
-      <input id="tagbtn" ng-init = "tagState =false;"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" />
+      <input id="tagbtn"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" />
     </header>
+     <a ng-hide = tagState href="https://github.com/hrhrprasath/NgDicomViewer"  style="left:90%; top:0% ; width :5%;height:15%;  position: absolute; z-index:15000 ">
+       <img src="Icons/forkme.png"  style="left:10%; top:0% ; width :90%;height:90%;">
+      </a>
     <div class = "canvousdiv">
       <dicomviewer clearbuttonid="clrbtn" clearannotationbuttonid = "clrann" tool={{SelectedTool}} colour={{SelectedColor}} fileutilityid ="fileinput" tagdivid="tagdiv" tagbuttonid="tagbtn" applybtnid="applybtn" urllistid = "urlsList" urlopenbtnid ="openurlbtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer> 
     </div> 
@@ -79,6 +82,15 @@
       <span ng-show="WCenter" style="top:50%;left: 50%;width: 30%;height: 50%;text-align: right;font-size: 1em; position: absolute"> Window Center:{{WCenter}}</span>
      </footer>
   </div> 
+
+  <!--<div class="github-fork-ribbon-wrapper right-bottom" style="left:80%; top:84% ; width :20%;height:16%;  position: absolute ">
+        <div class="github-fork-ribbon">
+             <a href="https://github.com/hrhrprasath/NgDicomViewer">Fork me on GitHub</a>
+        </div>
+    </div>-->
+     <!-- <div class = "ribbon" style="left:95%; top:95% ; width :5%;height:5%;  position: absolute ">
+      <a href="https://github.com/hrhrprasath/NgDicomViewer">forke me</a>
+      </div>-->
       
   </body>
 </html>

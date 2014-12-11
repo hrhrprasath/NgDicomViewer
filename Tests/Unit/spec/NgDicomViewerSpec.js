@@ -220,8 +220,8 @@ describe("FilterTool Tool", function () {
     var imageHandler, Tool;
     Tool = new FilterTool();
     it("Step1: Checking for Object Asssiginments", function () {
-		imageHandler =imgHandler;
-		Tool.SetImageHandler(imageHandler);
+        imageHandler = imgHandler;
+        Tool.SetImageHandler(imageHandler);
         expect(Tool).toBeDefined();
         expect(Tool.context).toEqual(imageHandler.context);
         expect(Tool.canvas).toEqual(imageHandler.canvas);
@@ -237,6 +237,13 @@ describe("FilterTool Tool", function () {
     it("Step3: Checking for Sharpen", function () {
         expect(Tool.Sharpen).toBeDefined();
         Tool.Sharpen();
+    });
+
+    it("Step4: Checking for Threshold", function () {
+        expect(Tool.Threshold).toBeDefined();
+        imageHandler.thresholdRange.min = 150;
+        imageHandler.thresholdRange.max = 250;
+        Tool.Threshold();
     });
 
 });

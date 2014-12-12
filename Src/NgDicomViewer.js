@@ -52,7 +52,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                  //   imagehandler.ResetAll();  
                  var index = filehandler.GetCurrentIndex(); 
                  filehandler.ResetCurrentImage(index); 
-                 imagehandler = filehandler.GetCurrentImageHandler();
+                 imagehandler = filehandler.GetCurrentImageHandler(); 
+                 imagehandler.annotationHistory.length = 0;
                 } 
                 if (attrs["tool"] == "threshold") {       
 //                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);

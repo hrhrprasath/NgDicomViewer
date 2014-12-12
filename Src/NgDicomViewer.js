@@ -2,7 +2,7 @@
 var dwv = dwv || {};
 dwv.dicom = dwv.dicom || {};
 ngDicomViewer.controller('dicomcontroller', function ($scope, $rootScope, $document, $window) {
-    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image"];
+    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image"];//Todo:better reset opoeration
     $scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
      'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
     $scope.SelectedColor = 'red';
@@ -49,7 +49,10 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     imagehandler.GetFilterTool().Sobel();
                 }    
                 if (attrs["tool"] == "reset image") {
-                    imagehandler.ResetAll();
+                 //   imagehandler.ResetAll();  
+                 var index = filehandler.GetCurrentIndex(); 
+                 filehandler.ResetCurrentImage(index); 
+                 imagehandler = filehandler.GetCurrentImageHandler();
                 } 
                 if (attrs["tool"] == "threshold") {       
 //                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
@@ -646,7 +649,7 @@ var WindowLevelTool = (function () {
         var windowCenter = parseInt(this.viewer.getWindowLut().getCenter(), 10) + diffY;
         var windowWidth = parseInt(this.viewer.getWindowLut().getWidth(), 10) + diffX;
         // update GUI      
-        console.log(windowCenter + "" + windowWidth);
+       // console.log(windowCenter + "" + windowWidth);
         this.viewer.setWindowLevel(windowCenter, windowWidth);
         var imageData = this.context.createImageData(this.canvas.width, this.canvas.height);
         this.viewer.generateImageData(imageData);
@@ -1456,6 +1459,20 @@ var FileHandler = (function () {
         };
         request.send(null);
     };
+    /**
+    * To Reset Displayed file
+    * @method ResetCurrentImage
+    * @param {index} index of required file needed to be reseted  
+    * @return none
+    */
+    FileHandler.prototype.ResetCurrentImage = function (index) {
+        this.index = index;
+        if (!this.remoteFile)
+           this.LoadFile(this.fileList[this.index]);
+        else
+           this.LoadRemoteFile(this.fileList[this.index]);
+      
+    };   
     /**
     * To Display the file from given index
     * @method SetDisplayFile

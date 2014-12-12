@@ -104,12 +104,14 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                         $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
                         $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();   
                     });
-                }
+                }  
+                event.stopPropagation();
             }
 
             element.bind('mousedown', mouseDown);
             element.bind('mousemove', mouseMove);
             element.bind('mouseup', mouseUp);
+            element.bind('mouseleave', mouseUp);
 
             var applybtn = angular.element(document.getElementById(attrs["applybtnid"]));
             if (applybtn) {
@@ -379,7 +381,8 @@ var AnnotationTools = (function () {
         }
         this._isMouseMoved = false;
         this.isToolActive = false;
-        this.context.beginPath();
+        this.context.beginPath(); 
+        this.imageHandler.ResetAndUpdate();
         var toolParamObj = new toolParam();
         if (this.currentShape == "line") {
             this.context.moveTo(this.startx, this.starty);

@@ -5,6 +5,8 @@ Predominantly made to view DICOM images on HTML 5 canvas on modern browsers with
 
 Not fully DICOM compliant, see <a href="https://github.com/ivmartel/dwv/wiki/Dicom-Support">Dicom-Support</a> for details
 
+For Demo please <a href="http://hrhrprasath.github.io/NgDicomViewer/demo/ng-DicomViewer.html">click</a>
+
 All coding/implementation contributions and comments are welcome.
 Source project
 =============

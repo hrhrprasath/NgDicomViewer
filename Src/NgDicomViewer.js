@@ -654,6 +654,8 @@ var WindowLevelTool = (function () {
         var windowWidth = parseInt(this.viewer.getWindowLut().getWidth(), 10) + diffX;
         // update GUI      
        // console.log(windowCenter + "" + windowWidth);
+		if(windowWidth < 1)
+			windowWidth = 1;
         this.viewer.setWindowLevel(windowCenter, windowWidth);
         var imageData = this.context.createImageData(this.canvas.width, this.canvas.height);
         this.viewer.generateImageData(imageData);

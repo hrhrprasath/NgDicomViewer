@@ -2,13 +2,13 @@
 var dwv = dwv || {};
 dwv.dicom = dwv.dicom || {};
 ngDicomViewer.controller('dicomcontroller', function ($scope, $rootScope, $document, $window) {
-    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image"];//Todo:better reset opoeration
+    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image","clear","clearAnnotation"];//Todo:better reset opoeration
     $scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
      'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
     $scope.SelectedColor = 'red';
     $scope.SelectedTool = "line";
-    $scope.RemoteFile = false;     
-   
+    $scope.RemoteFile = false;
+
 });
 ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope) {
     return {
@@ -25,50 +25,118 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             element.append(angularCanvas);
 
             //@ tools and Shapes part-------------------<
-            var currentShape = attrs["tool"];
-            var currentColour = attrs["colour"];
-            $rootScope.Tag = []; 
+//            var currentShape = attrs["tool"];
+//            var currentColour = attrs["colour"];
+            $rootScope.Tag = [];
 
             $rootScope.Rmin = 0;
             $rootScope.Rmax = 100;
             var view = null;
             var filehandler = null
             var imagehandler = null;
-
-            var buttonTool = function () {
+            var isThresholdOn=false;
+            scope.$watch('SelectedTool',function(newval,oldval){
+              if(newval != oldval)
+              {
+                isThresholdOn= false;
                 if (!imagehandler.GetCanvasImage())//imageData
-                    return false;
-                if (attrs["tool"] == "plain" || attrs["tool"] == "invplain" || attrs["tool"] == "rainbow" || attrs["tool"] == "hot" || attrs["tool"] == "test") {
-                    imagehandler.SetToolParam(attrs["tool"]);
+                  return false;
+                  if (newval == "plain" || newval == "invplain" || newval == "rainbow" || newval == "hot" || newval == "test") {
+                    imagehandler.SetToolParam(newval);
                     imagehandler.GetWindowLevelTool().ChangeColorMap();
-                }
-                if (attrs["tool"] == "sharpen") {
+                  }
+                  if (newval == "sharpen") {
                     imagehandler.GetFilterTool().Sharpen(); //SetViewer(view,angularCanvas[0],angularCanvas[0].getContext("2d"));
-                }
-                if (attrs["tool"] == "sobel") {
+                  }
+                  if (newval == "sobel") {
                     imagehandler.GetFilterTool().Sobel();
-                }    
-                if (attrs["tool"] == "reset image") {
-                 //   imagehandler.ResetAll();  
-                 var index = filehandler.GetCurrentIndex(); 
-                 filehandler.ResetCurrentImage(index); 
-                 imagehandler = filehandler.GetCurrentImageHandler(); 
-                 imagehandler.annotationHistory.length = 0;
-                } 
-                if (attrs["tool"] == "threshold") {       
-//                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
-//                    imagehandler.thresholdRange.max = parseInt($rootScope.Tmax);
+                  }
+                  if (newval == "reset image") {
+                    var index = filehandler.GetCurrentIndex();
+                    filehandler.ResetCurrentImage(index);
+                    imagehandler = filehandler.GetCurrentImageHandler();
+                    imagehandler.annotationHistory.length = 0;
+                  }
+                  if (newval == "threshold") {
+                    isThresholdOn= true;
                     imagehandler.GetFilterTool().Threshold();
+                  }
+                  if(newval=='clear')
+                  {
+                    imagehandler = null;
+                    $rootScope.Tag = [];
+                    $rootScope.PatientName = "";
+                    $rootScope.PatientId = "";
+                    $rootScope.WWidth = "";
+                    $rootScope.WCenter = "";
+                    $rootScope.Rmin =0;
+                    $rootScope.Rmax =100;
+                    tags = null;
+                    if (angularCanvas)
+                      angularCanvas[0].width = angularCanvas[0].width;
+                  }
+                  if(newval == 'clearAnnotation')
+                  {
+                    if(imagehandler)
+                      imagehandler.ClearAnnotation();
+                  }
+              }
+              });    
+              $rootScope.$watch('Tval.min',function(newval,oldval){
+                if(newval != oldval)
+                {
+                  if(isThresholdOn)
+                  {     
+                      imagehandler.thresholdRange.min = newval;
+                      imagehandler.GetFilterTool().Threshold();
+                  }
                 }
-            };
+              });   
+              $rootScope.$watch('Tval.max',function(newval,oldval){
+                if(newval != oldval)
+                {
+                  if(isThresholdOn)
+                  {     
+                      imagehandler.thresholdRange.max = newval;
+                      imagehandler.GetFilterTool().Threshold();
+                  }
+                }
+              });
+
+//            var buttonTool = function () {
+//                if (!imagehandler.GetCanvasImage())//imageData
+//                    return false;
+//                if (attrs["tool"] == "plain" || attrs["tool"] == "invplain" || attrs["tool"] == "rainbow" || attrs["tool"] == "hot" || attrs["tool"] == "test") {
+//                    imagehandler.SetToolParam(attrs["tool"]);
+//                    imagehandler.GetWindowLevelTool().ChangeColorMap();
+//                }
+//                if (attrs["tool"] == "sharpen") {
+//                    imagehandler.GetFilterTool().Sharpen(); //SetViewer(view,angularCanvas[0],angularCanvas[0].getContext("2d"));
+//                }
+//                if (attrs["tool"] == "sobel") {
+//                    imagehandler.GetFilterTool().Sobel();
+//                }
+//                if (attrs["tool"] == "reset image") {
+//                 //   imagehandler.ResetAll();
+//                 var index = filehandler.GetCurrentIndex();
+//                 filehandler.ResetCurrentImage(index);
+//                 imagehandler = filehandler.GetCurrentImageHandler();
+//                 imagehandler.annotationHistory.length = 0;
+//                }
+//                if (attrs["tool"] == "threshold") {
+////                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
+////                    imagehandler.thresholdRange.max = parseInt($rootScope.Tmax);
+//                    imagehandler.GetFilterTool().Threshold();
+//                }
+//            };
 
             var mouseDown = function (event) {
                 if (!imagehandler)
                     return false;
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
-                if (attrs["tool"] != "WindowLevel") {
-                    imagehandler.SetToolParam(attrs["tool"], attrs["colour"]);
+                if (scope.SelectedTool != "WindowLevel") {
+                    imagehandler.SetToolParam(scope.SelectedTool,scope.SelectedColor);
                     imagehandler.GetAnnotationTool().Start(event);
                 }
                 else {
@@ -82,7 +150,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     return false;
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
-                if (attrs["tool"] != "WindowLevel") {
+                if (scope.SelectedTool != "WindowLevel") {
                     imagehandler.GetAnnotationTool().Track(event);
                 }
                 else {
@@ -95,16 +163,16 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     return false;
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
-                if (attrs["tool"] != "WindowLevel") {
+                if (scope.SelectedTool != "WindowLevel") {
                     imagehandler.GetAnnotationTool().Stop(event);
                 }
                 else {
                     imagehandler.GetWindowLevelTool().Stop(event);
                     scope.$apply(function () {
                         $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
-                        $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();   
+                        $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
                     });
-                }  
+                }
                 event.stopPropagation();
             }
 
@@ -113,17 +181,17 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             element.bind('mouseup', mouseUp);
             element.bind('mouseleave', mouseUp);
 
-            var applybtn = angular.element(document.getElementById(attrs["applybtnid"]));
-            if (applybtn) {
-                applybtn.bind("click", buttonTool);
-            }
+//            var applybtn = angular.element(document.getElementById(attrs["applybtnid"]));
+//            if (applybtn) {
+//                applybtn.bind("click", buttonTool);
+//            }
 
             var mouseWheel = function (event) {
                 //ToDo: Zoom in and zoom out logic pending
-                //imagehandler.GetTransformationTool().Start(e,imageData); 
+                //imagehandler.GetTransformationTool().Start(e,imageData);
                 if (!filehandler)
                     return;
-                //image loading 
+                //image loading
                 if (event.wheelDelta < 0) {
                     var idx = filehandler.GetCurrentIndex();
                     if ((idx + 1) < (filehandler.fileList.length)) {
@@ -154,11 +222,11 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     $rootScope.PatientName = imagehandler.tag.PatientName.value.toString();
                     $rootScope.PatientId = imagehandler.tag.PatientID.value.toString();
                     $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
-                    $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();   
-                    $rootScope.Rmin =imagehandler.GetViewer().getImage().getDataRange().min; 
-                    $rootScope.Rmax =imagehandler.GetViewer().getImage().getDataRange().max; 
+                    $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
+                    $rootScope.Rmin =imagehandler.GetViewer().getImage().getDataRange().min;
+                    $rootScope.Rmax =imagehandler.GetViewer().getImage().getDataRange().max;
                     $rootScope.Tval = imagehandler.thresholdRange;
-                    
+
                 });
             };
             var onFileListChanged = function (event) {
@@ -174,9 +242,9 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
 
             fileUtilityElement.bind('change', onFileListChanged);
 
-            ///@End Of Dicom File Handling---------->      
+            ///@End Of Dicom File Handling---------->
 
-            ///Remote Dicom File Handling----------------< 
+            ///Remote Dicom File Handling----------------<
             var urlList = angular.element(document.getElementById(attrs["urllistid"]));
             var openUrlBtn = angular.element(document.getElementById(attrs["urlopenbtnid"]));
 
@@ -191,10 +259,10 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             }
             if (openUrlBtn)
                 openUrlBtn.bind('click', RemoteFileLoad);
-            ///@End Of remote Dicom File Handling---------->   
+            ///@End Of remote Dicom File Handling---------->
 
-            ///@Clear All--------< 
-            var clearButton = angular.element(document.getElementById(attrs["clearbuttonid"]));
+            ///@Clear All--------<
+//            var clearButton = angular.element(document.getElementById(attrs["clearbuttonid"]));
             var clear = function () {
                 imagehandler = null;
                 scope.$apply(function () {
@@ -202,38 +270,38 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     $rootScope.PatientName = "";
                     $rootScope.PatientId = "";
                     $rootScope.WWidth = "";
-                    $rootScope.WCenter = ""; 
-                    $rootScope.Rmin =0; 
-                    $rootScope.Rmax =100; 
+                    $rootScope.WCenter = "";
+                    $rootScope.Rmin =0;
+                    $rootScope.Rmax =100;
                 });
                 tags = null;
                 if (angularCanvas)
                     angularCanvas[0].width = angularCanvas[0].width;
 
             }
-            if (clearButton)
-                clearButton.bind('click', clear);
-            ///@End of Clear all------->   
+//            if (clearButton)
+//                clearButton.bind('click', clear);
+            ///@End of Clear all------->
 
-            ///@Clear Annotation--------< 
-            var clearAnnotationBtn = angular.element(document.getElementById(attrs["clearannotationbuttonid"]));
-            var clearAnnotation = function () {
-                imagehandler.ClearAnnotation();
-            }
-            if (clearAnnotationBtn)
-                clearAnnotationBtn.bind('click', clearAnnotation);
-            ///@End of Clear all------->    
+            ///@Clear Annotation--------<
+//            var clearAnnotationBtn = angular.element(document.getElementById(attrs["clearannotationbuttonid"]));
+//            var clearAnnotation = function () {
+//                imagehandler.ClearAnnotation();
+//            }
+//            if (clearAnnotationBtn)
+//                clearAnnotationBtn.bind('click', clearAnnotation);
+            ///@End of Clear all------->
 
         }
     };
 });
 
-/*********************   
+/*********************
 Summary:
 * @class AnnotationTools
-* @namespace 
+* @namespace
 * @constructor
-* @param 
+* @param
 **********************/
 var AnnotationTools = (function () {
     function AnnotationTools() {
@@ -252,9 +320,9 @@ var AnnotationTools = (function () {
         this.imageHandler = null;
     }
     /**
-    * To Set ImageHandler's object into current stream 
+    * To Set ImageHandler's object into current stream
     * @method SetImageHandler
-    * @param {imagehandler} ImageHandler object 
+    * @param {imagehandler} ImageHandler object
     * @return none
     */
     AnnotationTools.prototype.SetImageHandler = function (imagehandler) {
@@ -278,7 +346,7 @@ var AnnotationTools = (function () {
         }
     };
     /**
-    * To capture mouse down event 
+    * To capture mouse down event
     * @method Start
     * @param {event} mouse event
     * @param {shape} tool name ["circle","line","rectangular","ellipse"]
@@ -291,7 +359,7 @@ var AnnotationTools = (function () {
         this.starty = event.offsetY;
     };
     /**
-    * To capture mouse move event 
+    * To capture mouse move event
     * @method Track
     * @param {event} mouse event
     * @return none
@@ -366,7 +434,7 @@ var AnnotationTools = (function () {
         this.context.stroke();
     };
     /**
-    * To capture mouse up event 
+    * To capture mouse up event
     * @method Stop
     * @param {event} mouse event
     * @return none
@@ -381,7 +449,7 @@ var AnnotationTools = (function () {
         }
         this._isMouseMoved = false;
         this.isToolActive = false;
-        this.context.beginPath(); 
+        this.context.beginPath();
         this.imageHandler.ResetAndUpdate();
         var toolParamObj = new toolParam();
         if (this.currentShape == "line") {
@@ -487,13 +555,13 @@ var AnnotationTools = (function () {
         this.toolHistory.push(toolParamObj);
     };
     /**
-    * To Calculate Area for the current tool  
+    * To Calculate Area for the current tool
     * @method CalculateArea
-    * @param {endx} end point x co-ordinate 
-    * @param {endy} end point y co-ordinate 
+    * @param {endx} end point x co-ordinate
+    * @param {endy} end point y co-ordinate
     * @param {radius} radius of circle
     * @param {a,b} a and b radius of ellipse
-    * @return {float} return area in float upto decimal points 
+    * @return {float} return area in float upto decimal points
     */
     AnnotationTools.prototype.CalculateArea = function (endx, endy, radius, a, b) {
         if (this.currentShape == "line") {
@@ -514,7 +582,7 @@ var AnnotationTools = (function () {
         }
     };
     /**
-    * To redraw annotations in history 
+    * To redraw annotations in history
     * @method DrawHistory
     * @param none
     * @return none
@@ -565,7 +633,7 @@ var AnnotationTools = (function () {
         }
     };
     /**
-    * Class to store the current tool requred infomation for drawing  
+    * Class to store the current tool requred infomation for drawing
     * @class toolParam
     * @param none
     * @return none
@@ -592,12 +660,12 @@ var AnnotationTools = (function () {
     return AnnotationTools;
 })();
 
-/*********************   
+/*********************
 Summary:To perform LUT operations
-* @class WindowLevelTool  
-* @namespace 
+* @class WindowLevelTool
+* @namespace
 * @constructor
-* @param 
+* @param
 **********************/
 var WindowLevelTool = (function () {
     function WindowLevelTool() {
@@ -611,9 +679,9 @@ var WindowLevelTool = (function () {
         this.maptoolName;
     }
     /**
-    * To Set ImageHandler's object into current stream 
+    * To Set ImageHandler's object into current stream
     * @method SetImageHandler
-    * @param {imagehandler} ImageHandler object 
+    * @param {imagehandler} ImageHandler object
     * @return none
     */
     WindowLevelTool.prototype.SetImageHandler = function (handler) {
@@ -627,7 +695,7 @@ var WindowLevelTool = (function () {
 
     };
     /**
-    * To capture mouse down event 
+    * To capture mouse down event
     * @method Start
     * @param {event} mouse event
     * @return none
@@ -638,7 +706,7 @@ var WindowLevelTool = (function () {
         this.isActive = true;
     };
     /**
-    * To capture mouse move event 
+    * To capture mouse move event
     * @method Track
     * @param {event} mouse event
     * @return none
@@ -652,7 +720,7 @@ var WindowLevelTool = (function () {
         // calculate new window level
         var windowCenter = parseInt(this.viewer.getWindowLut().getCenter(), 10) + diffY;
         var windowWidth = parseInt(this.viewer.getWindowLut().getWidth(), 10) + diffX;
-        // update GUI      
+        // update GUI
        // console.log(windowCenter + "" + windowWidth);
 		if(windowWidth < 1)
 			windowWidth = 1;
@@ -667,7 +735,7 @@ var WindowLevelTool = (function () {
         this.imageHandler.Update();
     };
     /**
-    * To capture mouse up event 
+    * To capture mouse up event
     * @method Stop
     * @param {event} mouse event
     * @return none
@@ -678,11 +746,11 @@ var WindowLevelTool = (function () {
         this.isActive = false;
     };
     //     /**
-    //     * To Clear wl operation 
+    //     * To Clear wl operation
     //     * @method Clear
     //     * @param {event} mouse event
     //     * @return none
-    //     **/ 
+    //     **/
     //    WindowLevelTool.prototype.Clear = function(event)
     //    {
     //        this.startX = event.offsetX;
@@ -691,7 +759,7 @@ var WindowLevelTool = (function () {
     //    };
 
     /**
-    * To Apply colout filters invert hot rainbow hot based on maptoolName value  
+    * To Apply colout filters invert hot rainbow hot based on maptoolName value
     * @method ChangeColorMap
     * @return none
     **/
@@ -744,7 +812,7 @@ var TransformationTool = (function () {
             //        this._orgX =this.imageHandler.orgX;
             //        this._orgY =this.imageHandler.orgY;
             //        this._zoomX =this.imageHandler.zoomX;
-            //        this._zoomY = this.imageHandler.zoomY;         
+            //        this._zoomY = this.imageHandler.zoomY;
         }
 
     };
@@ -752,19 +820,19 @@ var TransformationTool = (function () {
         this.canvas = event.target;
         //      this.cacheCanvas = document.createElement("canvas");
         //      this.cacheCanvas.width = this.canvas.width;
-        //      this.cacheCanvas.height = this.canvas.height;  
+        //      this.cacheCanvas.height = this.canvas.height;
         this.cacheCanvas.getContext("2d").putImageData(this.imageData, 0, 0);
         var scale = 0.1;
         if (event.wheelDelta > 0) {
-            //scale = 2;  
+            //scale = 2;
             this._scale += 1;
             this.ZoomIN(this._scale, event.offsetX, event.offsetY);
         }
         else {
-            // scale =.5; 
+            // scale =.5;
             this.ZoomOUT();
         }
-        //this.imageData = imagedata;  
+        //this.imageData = imagedata;
 
         // this.ZoomIN(scale,event.offsetX,event.offsetY);
     };
@@ -811,12 +879,12 @@ var TransformationTool = (function () {
     return TransformationTool;
 })();
 
-/*********************   
+/*********************
 Summary: To Apply filters like Sobel Sharpener threshold
 * @class FilterTool
-* @namespace 
+* @namespace
 * @constructor
-* @param 
+* @param
 **********************/
 var FilterTool = (function () {
     function FilterTool() {
@@ -826,9 +894,9 @@ var FilterTool = (function () {
         this.imageHandler = null;
     }
     /**
-    * To Set ImageHandler's object into current stream 
+    * To Set ImageHandler's object into current stream
     * @method SetImageHandler
-    * @param {handler} ImageHandler object 
+    * @param {handler} ImageHandler object
     * @return none
     */
     FilterTool.prototype.SetImageHandler = function (handler) {
@@ -840,7 +908,7 @@ var FilterTool = (function () {
         }
     };
     /**
-    * To perform Sobel Edge Detection 
+    * To perform Sobel Edge Detection
     * @method Sobel
     * @return none
     */
@@ -867,7 +935,7 @@ var FilterTool = (function () {
     };
 
     /**
-    * To perform Sharpen the displayed image 
+    * To perform Sharpen the displayed image
     * @method Sharpen
     * @return none
     */
@@ -891,12 +959,12 @@ var FilterTool = (function () {
     * @return none
     */
     FilterTool.prototype.Threshold = function () {
-        // TODO : need to a proper scaler to get threshold values     
+        // TODO : need to a proper scaler to get threshold values
        if (!this.viewer)
-          return false;       
+          return false;
        var imageMin= this.viewer.getImage().getDataRange().min;
-       var min = this.imageHandler.thresholdRange.min;  
-       var max = this.imageHandler.thresholdRange.max;  
+       var min = this.imageHandler.thresholdRange.min;
+       var max = this.imageHandler.thresholdRange.max;
        var threshFunction = function(value){
           if(value<min||value>max) {
               return imageMin;
@@ -916,12 +984,12 @@ var FilterTool = (function () {
     return FilterTool;
 })();
 
-/*********************   
+/*********************
 Summary: To handle and store all the operation related to image
 * @class ImageHandler
-* @namespace 
+* @namespace
 * @constructor
-* @param 
+* @param
 **********************/
 var ImageHandler = (function () {
     function ImageHandler() {
@@ -941,13 +1009,13 @@ var ImageHandler = (function () {
         this.orgY = 0;
         this.zoomX = 1;
         this.zoomY = 1;
-        this.cacheCanvas = null;   
+        this.cacheCanvas = null;
         this.thresholdRange={min:0,max:100}
         this._annotationTool = null;
         this._transformationTool = null;
     }
     /**
-    * To Set DWV viewer Object 
+    * To Set DWV viewer Object
     * @method SetViewer
     * @return none
     */
@@ -958,7 +1026,7 @@ var ImageHandler = (function () {
         }
     };
     /**
-    * To Set DWV tag Object 
+    * To Set DWV tag Object
     * @method SetTag
     * @return none
     */
@@ -968,7 +1036,7 @@ var ImageHandler = (function () {
         }
     };
     /**
-    * To get DWV viewer Object 
+    * To get DWV viewer Object
     * @method GetViewer
     * @return viewer Object
     */
@@ -976,7 +1044,7 @@ var ImageHandler = (function () {
         return this.viewer;
     };
     /**
-    * To get DWV image Object 
+    * To get DWV image Object
     * @method Getimage
     * @return image Objec
     */
@@ -986,7 +1054,7 @@ var ImageHandler = (function () {
     /**
     * To Set displaying canvas for the image
     * @method SetCanvas
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.SetCanvas = function (canvas) {
         if (canvas) {
@@ -998,7 +1066,7 @@ var ImageHandler = (function () {
     /**
     * To returns current canvas of the image
     * @method GetCanvas
-    * @return html canvas object 
+    * @return html canvas object
     */
     ImageHandler.prototype.GetCanvas = function () {
         return this.canvas;
@@ -1006,7 +1074,7 @@ var ImageHandler = (function () {
     /**
     * To Set displaying image for the canvas
     * @method SetCanvasImage
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.SetCanvasImage = function (canimg) {
         this.canvasImage = canimg;
@@ -1014,7 +1082,7 @@ var ImageHandler = (function () {
     /**
     * To Get displayed image from the canvas
     * @method GetCanvasImage
-    * @return image(byte array) 
+    * @return image(byte array)
     */
     ImageHandler.prototype.GetCanvasImage = function () {
         return this.canvasImage;
@@ -1030,7 +1098,7 @@ var ImageHandler = (function () {
     /**
     * To Set current tools name and parameter e.g.('line','red')
     * @method SetToolParam
-    * @param {currenttool} toolname 
+    * @param {currenttool} toolname
     * @param {colour} color or filter name
     * @return none
     **/
@@ -1044,8 +1112,8 @@ var ImageHandler = (function () {
     * @return annotation tool object
     */
     ImageHandler.prototype.GetAnnotationTool = function () {
-        // this._annotationTool = this.toolHandler.GetAnnotationTool();    
-        // return  this._annotationTool; 
+        // this._annotationTool = this.toolHandler.GetAnnotationTool();
+        // return  this._annotationTool;
         this.toolHandler.SetImageHandler(this);
         return this.toolHandler.GetAnnotationTool();
     };
@@ -1074,14 +1142,14 @@ var ImageHandler = (function () {
     */
     ImageHandler.prototype.GetTransformationTool = function () {
         // this._transformationTool = this.toolHandler.GetTransformationTool();
-        //return this._transformationTool;  
+        //return this._transformationTool;
         this.toolHandler.SetImageHandler(this);
         return this.toolHandler.GetTransformationTool();
     };
     /**
     * To displayed dicom image in canvas
     * @method DrawImage
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.DrawImage = function () {
         this.canvasImage = this.context.createImageData(this.canvas.width, this.canvas.height);
@@ -1098,7 +1166,7 @@ var ImageHandler = (function () {
     /**
     * To reset image in canvas
     * @method ResetImage
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.ResetImage = function () {
         this.canvas.width = this.canvas.width
@@ -1107,7 +1175,7 @@ var ImageHandler = (function () {
     /**
     * To clear image in canvas
     * @method Clear
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.Clear = function () {
         this.canvas.width = this.canvas.width;
@@ -1115,19 +1183,19 @@ var ImageHandler = (function () {
     /**
     * To reset canvas
     * @method ResetAll
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.ResetAll = function () {
         this.canvas.width = this.canvas.width
         this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.context.putImageData(this.originalImageData, 0, 0);  
-        this.annotationHistory.length=0;        
+        this.context.putImageData(this.originalImageData, 0, 0);
+        this.annotationHistory.length=0;
         this.canvasImage = this.context.getImageData(0,0,this.canvas.width, this.canvas.height);
     };
     /**
     * To reset transformation applied to canvas
     * @method ResetTrasnformation
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.ResetTrasnformation = function () {
         this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -1136,7 +1204,7 @@ var ImageHandler = (function () {
     /**
     * To apply current transformation  to canvas
     * @method ApplyCurrentTransformation
-    * @return none 
+    * @return none
     */
     //TODO : need better logic
     ImageHandler.prototype.ApplyCurrentTransformation = function () {
@@ -1153,14 +1221,14 @@ var ImageHandler = (function () {
         // the transform matrix (column-major order):
         // [ a c e ]
         // [ b d f ]
-        // [ 0 0 1 ]   
+        // [ 0 0 1 ]
         this.context.setTransform(this.zoomX, 0, 0, this.zoomY, this.orgX, this.orgY);
         this.context.drawImage(this.cacheCanvas, 0, 0);
     };
     /**
     * To clear annotation in the image
     * @method ClearAnnotation
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.ClearAnnotation = function () {
         this.annotationHistory.length = 0;
@@ -1169,7 +1237,7 @@ var ImageHandler = (function () {
     /**
     * To clear lut applied in the image
     * @method ClearLut
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.ClearLut = function () {
         this.ResetImage();
@@ -1177,20 +1245,20 @@ var ImageHandler = (function () {
     /**
     * To update image with its history
     * @method Update
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.Update = function () {
-        //this.ApplyCurrentTransformation(); 
+        //this.ApplyCurrentTransformation();
         this.GetAnnotationTool().DrawHistory();
 
     };
     /**
     * To reset and update image with its history
     * @method ResetAndUpdate
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.ResetAndUpdate = function () {
-        //this.ApplyCurrentTransformation(); 
+        //this.ApplyCurrentTransformation();
         this.ResetImage();
         this.GetAnnotationTool().DrawHistory();
 
@@ -1198,7 +1266,7 @@ var ImageHandler = (function () {
     /**
     * To update image with its previous annotations
     * @method UpdateAnnotation
-    * @return none 
+    * @return none
     */
     ImageHandler.prototype.UpdateAnnotation = function () {
         this.GetAnnotationTool().DrawHistory();
@@ -1207,7 +1275,7 @@ var ImageHandler = (function () {
     /**
     * To retuns tag object with removes of SQ data and in a formate of {Name:'',Value'',TagStr:'(group,element)'}
     * @method GetFilteredTags
-    * @return displayable Tag object for demographic info 
+    * @return displayable Tag object for demographic info
     */
     ImageHandler.prototype.GetFilteredTags = function () {
         var tagColl = this.tag;
@@ -1237,12 +1305,12 @@ var ImageHandler = (function () {
     return ImageHandler;
 })();
 
-/*********************   
+/*********************
 Summary: to handle all the tool operation related to image handler
 * @class ToolHandler
-* @namespace 
+* @namespace
 * @constructor
-* @param 
+* @param
 **********************/
 var ToolHandler = (function () {
     function ToolHandler() {
@@ -1253,9 +1321,9 @@ var ToolHandler = (function () {
         this.transformationTool = new TransformationTool();
     }
     /**
-    * To Set ImageHandler's object into current stream 
+    * To Set ImageHandler's object into current stream
     * @method SetImageHandler
-    * @param {imagehandler} ImageHandler object 
+    * @param {imagehandler} ImageHandler object
     * @return none
     */
     ToolHandler.prototype.SetImageHandler = function (imagehandler) {
@@ -1312,12 +1380,12 @@ var ToolHandler = (function () {
     return ToolHandler;
 })();
 
-/*********************   
+/*********************
 Summary: To handle File Api of html and maintain collection of all files and related onjects to it
 * @class FileHandler
-* @namespace 
+* @namespace
 * @constructor
-* @param 
+* @param
 **********************/
 var FileHandler = (function () {
     function FileHandler() {
@@ -1332,9 +1400,9 @@ var FileHandler = (function () {
     /**
     * To Set elements need to process
     * @method SetElements
-    * @param {canvas} canvas on which image will be drawn  
-    * @param {parentElement} parent element of canvas 
-    * @param {callback} callback funcation to be called after a file is been loaded 
+    * @param {canvas} canvas on which image will be drawn
+    * @param {parentElement} parent element of canvas
+    * @param {callback} callback funcation to be called after a file is been loaded
     * @return none
     */
     FileHandler.prototype.SetElements = function (canvas, parentElement, callback) {
@@ -1346,7 +1414,7 @@ var FileHandler = (function () {
     /**
     * To initialize the objects as per the number of file selected
     * @method InitializeFiles
-    * @param {fileApiObjArray} file object array from file change evet   
+    * @param {fileApiObjArray} file object array from file change evet
     * @return none
     */
     FileHandler.prototype.InitializeFiles = function (fileApiObjArray) {
@@ -1363,7 +1431,7 @@ var FileHandler = (function () {
     /**
     * To initialize the objects as per the number of file selected
     * @method InitializeRemotetFiles
-    * @param {urlarray} file object array from file change evet   
+    * @param {urlarray} file object array from file change evet
     * @return none
     */
     FileHandler.prototype.InitializeRemoteFiles = function (urlarray) {
@@ -1380,7 +1448,7 @@ var FileHandler = (function () {
     /**
     * To load current file in canvas
     * @method LoadFile
-    * @param {fileListObj} required file object to be loaded   
+    * @param {fileListObj} required file object to be loaded
     * @return none
     */
     FileHandler.prototype.LoadFile = function (fileListObj) {
@@ -1427,7 +1495,7 @@ var FileHandler = (function () {
     /**
     * To load current file in canvas
     * @method LoadRemoteFile
-    * @param {fileListObj} required file object to be loaded   
+    * @param {fileListObj} required file object to be loaded
     * @return none
     */
     FileHandler.prototype.LoadRemoteFile = function (fileListObj) {
@@ -1468,7 +1536,7 @@ var FileHandler = (function () {
     /**
     * To Reset Displayed file
     * @method ResetCurrentImage
-    * @param {index} index of required file needed to be reseted  
+    * @param {index} index of required file needed to be reseted
     * @return none
     */
     FileHandler.prototype.ResetCurrentImage = function (index) {
@@ -1477,12 +1545,12 @@ var FileHandler = (function () {
            this.LoadFile(this.fileList[this.index]);
         else
            this.LoadRemoteFile(this.fileList[this.index]);
-      
-    };   
+
+    };
     /**
     * To Display the file from given index
     * @method SetDisplayFile
-    * @param {index} index of required file needed to be loaded  
+    * @param {index} index of required file needed to be loaded
     * @return none
     */
     FileHandler.prototype.SetDisplayFile = function (index) {
@@ -1523,7 +1591,7 @@ var FileHandler = (function () {
         return this.fileList[this.index].ImageHandler;
     };
     /**
-    * Class to store the files objects required  
+    * Class to store the files objects required
     * @class fileParam
     * @param none
     * @return none
@@ -1533,7 +1601,7 @@ var FileHandler = (function () {
         this.ImageHandler = null;
     };
     /**
-    * Class to store the remort files objects required  
+    * Class to store the remort files objects required
     * @class urlParam
     * @param none
     * @return none

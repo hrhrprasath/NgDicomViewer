@@ -6,7 +6,8 @@ ngDicomViewer.controller('dicomcontroller', function ($scope, $rootScope, $docum
     $scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
      'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
     $scope.SelectedColor = 'red';
-    $scope.SelectedTool = "line";
+    $scope.SelectedMouseTool = "line";
+	$scope.SelectedButtonTool = "";
     $scope.RemoteFile = false;
 
 });
@@ -35,8 +36,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             var filehandler = null
             var imagehandler = null;
             var isThresholdOn=false;
-            scope.$watch('SelectedTool',function(newval,oldval){
-              if(newval != oldval)
+		    scope.$watch('SelectedButtonTool',function(newval,oldval){
+              if(newval != oldval && newval)
               {
                 isThresholdOn= false;
                 if (!imagehandler.GetCanvasImage())//imageData
@@ -80,6 +81,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     if(imagehandler)
                       imagehandler.ClearAnnotation();
                   }
+				  scope.SelectedButtonTool="";
               }
               });    
               $rootScope.$watch('Tval.min',function(newval,oldval){
@@ -135,8 +137,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     return false;
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
-                if (scope.SelectedTool != "WindowLevel") {
-                    imagehandler.SetToolParam(scope.SelectedTool,scope.SelectedColor);
+                if (scope.SelectedMouseTool != "WindowLevel") {
+                    imagehandler.SetToolParam(scope.SelectedMouseTool,scope.SelectedColor);
                     imagehandler.GetAnnotationTool().Start(event);
                 }
                 else {
@@ -150,7 +152,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     return false;
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
-                if (scope.SelectedTool != "WindowLevel") {
+                if (scope.SelectedMouseTool != "WindowLevel") {
                     imagehandler.GetAnnotationTool().Track(event);
                 }
                 else {
@@ -163,7 +165,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     return false;
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
-                if (scope.SelectedTool != "WindowLevel") {
+                if (scope.SelectedMouseTool != "WindowLevel") {
                     imagehandler.GetAnnotationTool().Stop(event);
                 }
                 else {

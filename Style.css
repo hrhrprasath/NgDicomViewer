@@ -90,9 +90,11 @@ ul
 }
 ul, li
 {
-    padding: 5px;
+    padding: 4px;
     font: normal 12px/normal "ABeeZee" , Helvetica, sans-serif;
     color: rgba(0,0,0,1);
+	max-height:95%;
+	overflow-y:auto;
 }
 .canvousdiv
 {
@@ -113,4 +115,32 @@ ul, li
     background: #f5f5f5;
     -webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
     box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+}
+.toolbtn
+{
+	width:30px;
+	height:30px;
+	display:inline-table;
+	margin:4%;
+    cursor: pointer;
+    border: 1px solid #cecece;
+    font: normal 12px/normal "ABeeZee" , Helvetica, sans-serif;
+    color: rgba(0,0,0,1);
+    text-align: center;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    background: #f5f5f5;
+}
+.toolbtn:hover
+{
+    border: 1px solid #898888;
+    -webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+    box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+}
+
+.toolmbtnclicked
+{
+    border-color:  #0185c1;
+    -webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+    box-shadow: 0 0 2px 3px  #0185c1;
 }

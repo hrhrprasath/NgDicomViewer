@@ -39,18 +39,42 @@
     <div ng-show = "optionState" class = "displaydiv" style="top:6.2%;left: 0%;width: 20%;height: 87.1%;position: absolute">
       <ul>
       <!--style="text-align: center;left: 25%;width:50%;position: absolute"-->
-         <li><br/><span>OPTIONS</span></li><hr>
-         <li><span>Tools :</span>
-             <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
-         <li ng-show="SelectedTool == 'circle'||SelectedTool == 'line'||SelectedTool == 'rectangular'||SelectedTool == 'ellipse'"><span>Color    :</span>
+		<li><br/><span>FILE:</span></li><hr>
+		<li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
+		<li ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
+		<li ng-show="RemoteFile" >URLS: <input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li>
+		<li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li>
+		
+		<li><br/><span>TOOLS</span></li><hr>
+		<!-- <li><span>Tools :</span></li>
+        <li><select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
+		 -->
+		<li>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='circle'" ng-class="SelectedMouseTool=='circle' ? 'toolmbtnclicked':''"title="circle" value="circle"/>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='line'" ng-class="SelectedMouseTool=='line' ? 'toolmbtnclicked':''" title="line" value="line"/>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='rectangular'" ng-class="SelectedMouseTool=='rectangular' ? 'toolmbtnclicked':''"title="rectangular" value="rect"/>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='ellipse'" ng-class="SelectedMouseTool=='ellipse' ? 'toolmbtnclicked':''"title="ellipse" value="ellipse"/>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='WindowLevel'" ng-class="SelectedMouseTool=='WindowLevel' ? 'toolmbtnclicked':''"title="WindowLevel" value="WL"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='plain'" title="plain" value="plain"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='invplain'" title="invplain" value="invplain"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='rainbow'" title="rainbow" value="rainbow"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='hot'" title="hot" value="hot"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='test'" title="test" value="test"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sharpen'" title="sharpen" value="sharpen"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sobel'" title="sobel" value="sobel"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='threshold'" title="threshold" value="threshold"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='reset image'" title="reset image" value="reset image"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clear'" title="clear" value="clear"/>
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clearAnnotation'" title="clearAnnotation" value="clearAnnotation"/>
+		</li>
+		</li>
+		<li ng-show="SelectedMouseTool == 'circle'||SelectedMouseTool == 'line'||SelectedMouseTool == 'rectangular'||SelectedMouseTool == 'ellipse'||SelectedButtonTool == 'threshold'" > <br/><span>TOOL OPTIONS:</span><hr></li>
+        <li ng-show="SelectedMouseTool == 'circle'||SelectedMouseTool == 'line'||SelectedMouseTool == 'rectangular'||SelectedMouseTool == 'ellipse'"><span>Color    :</span>
              <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li>
-         <li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
-         <li ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
-         <li ng-show="RemoteFile" >URLS:<input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li>
-         <li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li>
-         <li ng-show="SelectedTool == 'threshold'">
+        <li ng-show="SelectedButtonTool == 'threshold'"><span>Threshold Range:</span><br>
               <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.min" /><br>
-              <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.max" /></li>
+              <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.max" />
+		</li>
     <!--<li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'||SelectedTool == 'threshold'||SelectedTool == 'reset image'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>
          <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li>
          <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li>-->

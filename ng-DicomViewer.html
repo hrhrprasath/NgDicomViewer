@@ -50,22 +50,22 @@
         <li><select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
 		 -->
 		<li>
-			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='circle'" ng-class="SelectedMouseTool=='circle' ? 'toolmbtnclicked':''"title="circle" value="circle"/>
-			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='line'" ng-class="SelectedMouseTool=='line' ? 'toolmbtnclicked':''" title="line" value="line"/>
-			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='rectangular'" ng-class="SelectedMouseTool=='rectangular' ? 'toolmbtnclicked':''"title="rectangular" value="rect"/>
-			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='ellipse'" ng-class="SelectedMouseTool=='ellipse' ? 'toolmbtnclicked':''"title="ellipse" value="ellipse"/>
-			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='WindowLevel'" ng-class="SelectedMouseTool=='WindowLevel' ? 'toolmbtnclicked':''"title="WindowLevel" value="WL"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='plain'" title="plain" value="plain"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='invplain'" title="invplain" value="invplain"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='rainbow'" title="rainbow" value="rainbow"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='hot'" title="hot" value="hot"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='test'" title="test" value="test"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sharpen'" title="sharpen" value="sharpen"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sobel'" title="sobel" value="sobel"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='threshold'" title="threshold" value="threshold"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='reset image'" title="reset image" value="reset image"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clear'" title="clear" value="clear"/>
-			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clearAnnotation'" title="clearAnnotation" value="clearAnnotation"/>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='circle'" ng-class="SelectedMouseTool=='circle' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/cir.png');" title="circle" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='line'" ng-class="SelectedMouseTool=='line' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/line.png');" title="line" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='rectangular'" ng-class="SelectedMouseTool=='rectangular' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/rect.png');"  title="rectangular" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='ellipse'" ng-class="SelectedMouseTool=='ellipse' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/ele.png');"  title="ellipse" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='WindowLevel'" ng-class="SelectedMouseTool=='WindowLevel' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/wl.png');"  title="WindowLevel" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='plain'" title="plain" style=" background-image:url('Icons/plane.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='invplain'" title="invplain" style=" background-image:url('Icons/Ivt.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='rainbow'" title="rainbow" style=" background-image:url('Icons/rbow.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='hot'" title="hot"  style=" background-image:url('Icons/hot.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='test'" title="test" style=" background-image:url('Icons/test.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sharpen'" title="sharpen" style=" background-image:url('Icons/snr.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sobel'" title="sobel" style=" background-image:url('Icons/ed.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='threshold'" title="threshold" ng-class="SelectedButtonTool=='threshold' ? 'toolbtnclicked':''" style=" background-image:url('Icons/thold.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='reset image'" title="reset image" style=" background-image:url('Icons/rset.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clearAnnotation'" title="clearAnnotation" style=" background-image:url('Icons/clrann.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clear'" title="clear" style=" background-image:url('Icons/clr.png');"   />
 		</li>
 		</li>
 		<li ng-show="SelectedMouseTool == 'circle'||SelectedMouseTool == 'line'||SelectedMouseTool == 'rectangular'||SelectedMouseTool == 'ellipse'||SelectedButtonTool == 'threshold'" > <br/><span>TOOL OPTIONS:</span><hr></li>

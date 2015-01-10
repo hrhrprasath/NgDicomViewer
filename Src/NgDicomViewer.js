@@ -26,8 +26,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             element.append(angularCanvas);
 
             //@ tools and Shapes part-------------------<
-//            var currentShape = attrs["tool"];
-//            var currentColour = attrs["colour"];
+            //            var currentShape = attrs["tool"];
+            //            var currentColour = attrs["colour"];
             $rootScope.Tag = [];
 
             $rootScope.Rmin = 0;
@@ -35,102 +35,105 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             var view = null;
             var filehandler = null
             var imagehandler = null;
-            var isThresholdOn=false;
-		    scope.$watch('SelectedButtonTool',function(newval,oldval){
-              if(newval != oldval && newval)
-              {
-                isThresholdOn= false;
-                if (!imagehandler.GetCanvasImage())//imageData
-                  return false;
-                  if (newval == "plain" || newval == "invplain" || newval == "rainbow" || newval == "hot" || newval == "test") {
-                    imagehandler.SetToolParam(newval);
-                    imagehandler.GetWindowLevelTool().ChangeColorMap();
-                  }
-                  if (newval == "sharpen") {
-                    imagehandler.GetFilterTool().Sharpen(); //SetViewer(view,angularCanvas[0],angularCanvas[0].getContext("2d"));
-                  }
-                  if (newval == "sobel") {
-                    imagehandler.GetFilterTool().Sobel();
-                  }
-                  if (newval == "reset image") {
-                    var index = filehandler.GetCurrentIndex();
-                    filehandler.ResetCurrentImage(index);
-                    imagehandler = filehandler.GetCurrentImageHandler();
-                    imagehandler.annotationHistory.length = 0;
-                  }
-                  if (newval == "threshold") {
-                    isThresholdOn= true;
-                    imagehandler.GetFilterTool().Threshold();
-                  }
-                  if(newval=='clear')
-                  {
-                    imagehandler = null;
-                    $rootScope.Tag = [];
-                    $rootScope.PatientName = "";
-                    $rootScope.PatientId = "";
-                    $rootScope.WWidth = "";
-                    $rootScope.WCenter = "";
-                    $rootScope.Rmin =0;
-                    $rootScope.Rmax =100;
-                    tags = null;
-                    if (angularCanvas)
-                      angularCanvas[0].width = angularCanvas[0].width;
-                  }
-                  if(newval == 'clearAnnotation')
-                  {
-                    if(imagehandler)
-                      imagehandler.ClearAnnotation();
-                  }
-				  scope.SelectedButtonTool="";
-              }
-              });    
-              $rootScope.$watch('Tval.min',function(newval,oldval){
-                if(newval != oldval)
-                {
-                  if(isThresholdOn)
-                  {     
-                      imagehandler.thresholdRange.min = newval;
-                      imagehandler.GetFilterTool().Threshold();
-                  }
+            var isThresholdOn = false;
+            scope.$watch('SelectedButtonTool', function (newval, oldval) {
+                if (newval != oldval && newval) {
+                    isThresholdOn = false;
+                    if (!imagehandler)//imageData
+                    {
+                        scope.SelectedButtonTool = "";
+                        return false;
+                    }
+                    if (!imagehandler.GetCanvasImage())//imageData
+                    {
+                        scope.SelectedButtonTool = "";
+                        return false;
+                    }
+                    if (newval == "plain" || newval == "invplain" || newval == "rainbow" || newval == "hot" || newval == "test") {
+                        imagehandler.SetToolParam(newval);
+                        imagehandler.GetWindowLevelTool().ChangeColorMap();
+                    }
+                    if (newval == "sharpen") {
+                        imagehandler.GetFilterTool().Sharpen(); //SetViewer(view,angularCanvas[0],angularCanvas[0].getContext("2d"));
+                    }
+                    if (newval == "sobel") {
+                        imagehandler.GetFilterTool().Sobel();
+                    }
+                    if (newval == "reset image") {
+                        var index = filehandler.GetCurrentIndex();
+                        filehandler.ResetCurrentImage(index);
+                        imagehandler = filehandler.GetCurrentImageHandler();
+                        imagehandler.annotationHistory.length = 0;
+                    }
+                    if (newval == "threshold") {
+                        isThresholdOn = true;
+                        imagehandler.GetFilterTool().Threshold();
+                    }
+                    if (newval == 'clear') {
+                        imagehandler = null;
+                        $rootScope.Tag = [];
+                        $rootScope.PatientName = "";
+                        $rootScope.PatientId = "";
+                        $rootScope.WWidth = "";
+                        $rootScope.WCenter = "";
+                        $rootScope.Rmin = 0;
+                        $rootScope.Rmax = 100;
+                        tags = null;
+                        if (angularCanvas)
+                            angularCanvas[0].width = angularCanvas[0].width;
+                    }
+                    if (newval == 'clearAnnotation') {
+                        if (imagehandler)
+                            imagehandler.ClearAnnotation();
+                    }
+                    if (newval != "threshold")
+                        scope.SelectedButtonTool = "";
                 }
-              });   
-              $rootScope.$watch('Tval.max',function(newval,oldval){
-                if(newval != oldval)
-                {
-                  if(isThresholdOn)
-                  {     
-                      imagehandler.thresholdRange.max = newval;
-                      imagehandler.GetFilterTool().Threshold();
-                  }
-                }
-              });
+            });
 
-//            var buttonTool = function () {
-//                if (!imagehandler.GetCanvasImage())//imageData
-//                    return false;
-//                if (attrs["tool"] == "plain" || attrs["tool"] == "invplain" || attrs["tool"] == "rainbow" || attrs["tool"] == "hot" || attrs["tool"] == "test") {
-//                    imagehandler.SetToolParam(attrs["tool"]);
-//                    imagehandler.GetWindowLevelTool().ChangeColorMap();
-//                }
-//                if (attrs["tool"] == "sharpen") {
-//                    imagehandler.GetFilterTool().Sharpen(); //SetViewer(view,angularCanvas[0],angularCanvas[0].getContext("2d"));
-//                }
-//                if (attrs["tool"] == "sobel") {
-//                    imagehandler.GetFilterTool().Sobel();
-//                }
-//                if (attrs["tool"] == "reset image") {
-//                 //   imagehandler.ResetAll();
-//                 var index = filehandler.GetCurrentIndex();
-//                 filehandler.ResetCurrentImage(index);
-//                 imagehandler = filehandler.GetCurrentImageHandler();
-//                 imagehandler.annotationHistory.length = 0;
-//                }
-//                if (attrs["tool"] == "threshold") {
-////                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
-////                    imagehandler.thresholdRange.max = parseInt($rootScope.Tmax);
-//                    imagehandler.GetFilterTool().Threshold();
-//                }
-//            };
+            $rootScope.$watch('Tval.min', function (newval, oldval) {
+                if (newval != oldval) {
+                    if (isThresholdOn) {
+                        imagehandler.thresholdRange.min = newval;
+                        imagehandler.GetFilterTool().Threshold();
+                    }
+                }
+            });
+            $rootScope.$watch('Tval.max', function (newval, oldval) {
+                if (newval != oldval) {
+                    if (isThresholdOn) {
+                        imagehandler.thresholdRange.max = newval;
+                        imagehandler.GetFilterTool().Threshold();
+                    }
+                }
+            });
+
+            //            var buttonTool = function () {
+            //                if (!imagehandler.GetCanvasImage())//imageData
+            //                    return false;
+            //                if (attrs["tool"] == "plain" || attrs["tool"] == "invplain" || attrs["tool"] == "rainbow" || attrs["tool"] == "hot" || attrs["tool"] == "test") {
+            //                    imagehandler.SetToolParam(attrs["tool"]);
+            //                    imagehandler.GetWindowLevelTool().ChangeColorMap();
+            //                }
+            //                if (attrs["tool"] == "sharpen") {
+            //                    imagehandler.GetFilterTool().Sharpen(); //SetViewer(view,angularCanvas[0],angularCanvas[0].getContext("2d"));
+            //                }
+            //                if (attrs["tool"] == "sobel") {
+            //                    imagehandler.GetFilterTool().Sobel();
+            //                }
+            //                if (attrs["tool"] == "reset image") {
+            //                 //   imagehandler.ResetAll();
+            //                 var index = filehandler.GetCurrentIndex();
+            //                 filehandler.ResetCurrentImage(index);
+            //                 imagehandler = filehandler.GetCurrentImageHandler();
+            //                 imagehandler.annotationHistory.length = 0;
+            //                }
+            //                if (attrs["tool"] == "threshold") {
+            ////                    imagehandler.thresholdRange.min = parseInt($rootScope.Tmin);
+            ////                    imagehandler.thresholdRange.max = parseInt($rootScope.Tmax);
+            //                    imagehandler.GetFilterTool().Threshold();
+            //                }
+            //            };
 
             var mouseDown = function (event) {
                 if (!imagehandler)
@@ -138,7 +141,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                 if (!imagehandler.GetCanvasImage())//imageData
                     return false;
                 if (scope.SelectedMouseTool != "WindowLevel") {
-                    imagehandler.SetToolParam(scope.SelectedMouseTool,scope.SelectedColor);
+                    imagehandler.SetToolParam(scope.SelectedMouseTool, scope.SelectedColor);
                     imagehandler.GetAnnotationTool().Start(event);
                 }
                 else {
@@ -183,10 +186,10 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             element.bind('mouseup', mouseUp);
             element.bind('mouseleave', mouseUp);
 
-//            var applybtn = angular.element(document.getElementById(attrs["applybtnid"]));
-//            if (applybtn) {
-//                applybtn.bind("click", buttonTool);
-//            }
+            //            var applybtn = angular.element(document.getElementById(attrs["applybtnid"]));
+            //            if (applybtn) {
+            //                applybtn.bind("click", buttonTool);
+            //            }
 
             var mouseWheel = function (event) {
                 //ToDo: Zoom in and zoom out logic pending
@@ -225,8 +228,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     $rootScope.PatientId = imagehandler.tag.PatientID.value.toString();
                     $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
                     $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
-                    $rootScope.Rmin =imagehandler.GetViewer().getImage().getDataRange().min;
-                    $rootScope.Rmax =imagehandler.GetViewer().getImage().getDataRange().max;
+                    $rootScope.Rmin = imagehandler.GetViewer().getImage().getDataRange().min;
+                    $rootScope.Rmax = imagehandler.GetViewer().getImage().getDataRange().max;
                     $rootScope.Tval = imagehandler.thresholdRange;
 
                 });
@@ -264,7 +267,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             ///@End Of remote Dicom File Handling---------->
 
             ///@Clear All--------<
-//            var clearButton = angular.element(document.getElementById(attrs["clearbuttonid"]));
+            //            var clearButton = angular.element(document.getElementById(attrs["clearbuttonid"]));
             var clear = function () {
                 imagehandler = null;
                 scope.$apply(function () {
@@ -273,25 +276,25 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     $rootScope.PatientId = "";
                     $rootScope.WWidth = "";
                     $rootScope.WCenter = "";
-                    $rootScope.Rmin =0;
-                    $rootScope.Rmax =100;
+                    $rootScope.Rmin = 0;
+                    $rootScope.Rmax = 100;
                 });
                 tags = null;
                 if (angularCanvas)
                     angularCanvas[0].width = angularCanvas[0].width;
 
             }
-//            if (clearButton)
-//                clearButton.bind('click', clear);
+            //            if (clearButton)
+            //                clearButton.bind('click', clear);
             ///@End of Clear all------->
 
             ///@Clear Annotation--------<
-//            var clearAnnotationBtn = angular.element(document.getElementById(attrs["clearannotationbuttonid"]));
-//            var clearAnnotation = function () {
-//                imagehandler.ClearAnnotation();
-//            }
-//            if (clearAnnotationBtn)
-//                clearAnnotationBtn.bind('click', clearAnnotation);
+            //            var clearAnnotationBtn = angular.element(document.getElementById(attrs["clearannotationbuttonid"]));
+            //            var clearAnnotation = function () {
+            //                imagehandler.ClearAnnotation();
+            //            }
+            //            if (clearAnnotationBtn)
+            //                clearAnnotationBtn.bind('click', clearAnnotation);
             ///@End of Clear all------->
 
         }

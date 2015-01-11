@@ -153,3 +153,30 @@ ul, li
     -webkit-box-shadow: 0 0 2px 1px red;
     box-shadow: 0 0 2px 3px  red;
 }
+.helpdiv
+{
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    padding: 0px;
+    margin: 0px;
+    background-color: rgba(137,136,136,.5);
+    z-index: 15001;  
+    font: normal normal bold 1.5em/normal "Times New Roman" , Times, serif;
+}
+.helptopcontent
+{
+    top: 6%;
+    left: 0%;
+    width: auto;
+    height:auto;
+    display: block;
+    position: absolute;
+    padding: 0px;
+    margin: 0px;     
+    color:rgba(250,0,0,1);
+    z-index: 15002; 
+}

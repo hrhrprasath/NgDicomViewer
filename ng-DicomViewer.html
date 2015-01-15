@@ -40,7 +40,7 @@
       <ul>
       <!--style="text-align: center;left: 25%;width:50%;position: absolute"-->
 		<li><br/><span>FILE:</span></li><hr>
-		<li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
+		<li><input  class = "optionbtn" type="button" style = "width:40%;" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;" ng-click = "RemoteFile = true" value="Url"/></li>
 		<li ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
 		<li ng-show="RemoteFile" >URLS: <input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li>
 		<li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li>

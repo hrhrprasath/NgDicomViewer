@@ -14,48 +14,72 @@
     
      <link rel="stylesheet" type="text/css" href="Style.css">
   </head>
-  <body  oncontextmenu="return false;"  ng-init = "tagState =false;"> 
-    <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller"  style="top:0%;left: 0%;width: 99.8%;height: 100%;padding: 0px; position: absolute">
-    <header class ="displaydiv" style="top:0%;left: 0%;width: 100%;height: 6%;position: absolute"> 
-     <input ng-init = "optionState =false;"  ng-click = "optionState = !optionState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':optionState}"type="button" value="=" />
+  <body  oncontextmenu="return false;"  ng-init = "tagState =false;">
+    <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller" ng-init="ishelp = true" style="top:0%;left: 0%;width: 99.8%;height: 100%;padding: 0px; position: absolute">
+    <header class ="displaydiv" style="top:0%;left: 0%;width: 100%;height: 6%;position: absolute">
+     <input ng-init = "optionState =false;"  ng-click = "optionState = !optionState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':optionState}"type="button" value="=" title="option's"/>
       <span style="top:0%;left: 25%;width: 50%;height: 100%; margin:.3%;text-align: center;font-size: 2em; position: absolute"> Ng - DicomViewer </span>
-      <input id="tagbtn"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" />
+      <input id="tagbtn"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" title="tag's"/>
     </header>
      <a ng-hide = tagState href="https://github.com/hrhrprasath/NgDicomViewer"  style="left:90%; top:0% ; width :5%;height:15%;  position: absolute; z-index:15000 ">
        <img src="Icons/forkme.png"  style="left:10%; top:0% ; width :90%;height:90%;">
       </a>
     <div class = "canvousdiv">
-      <dicomviewer clearbuttonid="clrbtn" clearannotationbuttonid = "clrann" tool={{SelectedTool}} colour={{SelectedColor}} fileutilityid ="fileinput" tagdivid="tagdiv" tagbuttonid="tagbtn" applybtnid="applybtn" urllistid = "urlsList" urlopenbtnid ="openurlbtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer> 
-    </div> 
+      <dicomviewer fileutilityid ="fileinput"  urllistid = "urlsList" urlopenbtnid ="openurlbtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer>
+    </div>
     <div ng-show = "optionState" class = "displaydiv" style="top:6.2%;left: 0%;width: 20%;height: 87.1%;position: absolute">
-      <ul>            
+      <ul>
       <!--style="text-align: center;left: 25%;width:50%;position: absolute"-->
-         <li><br/><span>OPTIONS</span></li><hr>
-         <li><span>Tools :</span>
-             <select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
-         <li ng-show="SelectedTool == 'circle'||SelectedTool == 'line'||SelectedTool == 'rectangular'||SelectedTool == 'ellipse'"><span>Color    :</span>
-             <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li>     
-         <li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
-         <li ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
-         <li ng-show="RemoteFile" >URLS:<input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li> 
-         <li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li> 
-         <li ng-show="SelectedTool == 'threshold'">
+		<li><br/><span>FILE:</span></li><hr>
+		<li><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = false" value="File"  /><input  class = "optionbtn" type="button" style = "width:40%;display:inline-table" ng-click = "RemoteFile = true" value="Url"/></li>
+		<li ng-hide="RemoteFile"><input id = "fileinput"class = "optionbtn" style = "width:80%"type="file" multiple="" /></li>
+		<li ng-show="RemoteFile" >URLS: <input class = "optionbtn" style = "width:60%" type="text" id="urlsList" /></li>
+		<li ng-show="RemoteFile" ><input class = "optionbtn"  type="button" value="OpenUrls" id="openurlbtn" /></li>
+		
+		<li><br/><span>TOOLS</span></li><hr>
+		<!-- <li><span>Tools :</span></li>
+        <li><select class = "optionbtn" ng-model="SelectedTool" ng-options="o as o for o in Tool"></select></li>
+		 -->
+		<li>
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='circle'" ng-class="SelectedMouseTool=='circle' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/cir.png');" title="circle" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='line'" ng-class="SelectedMouseTool=='line' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/line.png');" title="line" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='rectangular'" ng-class="SelectedMouseTool=='rectangular' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/rect.png');"  title="rectangular" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='ellipse'" ng-class="SelectedMouseTool=='ellipse' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/ele.png');"  title="ellipse" />
+			<input type="button" class="toolbtn" ng-click="SelectedMouseTool='WindowLevel'" ng-class="SelectedMouseTool=='WindowLevel' ? 'toolmbtnclicked':''" style=" background-image:url('Icons/wl.png');"  title="WindowLevel" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='plain'" title="plain" style=" background-image:url('Icons/plane.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='invplain'" title="invplain" style=" background-image:url('Icons/Ivt.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='rainbow'" title="rainbow" style=" background-image:url('Icons/rbow.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='hot'" title="hot"  style=" background-image:url('Icons/hot.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='test'" title="test" style=" background-image:url('Icons/test.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sharpen'" title="sharpen" style=" background-image:url('Icons/snr.png');"  />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='sobel'" title="sobel" style=" background-image:url('Icons/ed.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='threshold'" title="threshold" ng-class="SelectedButtonTool=='threshold' ? 'toolbtnclicked':''" style=" background-image:url('Icons/thold.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='reset image'" title="reset image" style=" background-image:url('Icons/rset.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clearAnnotation'" title="clearAnnotation" style=" background-image:url('Icons/clrann.png');" />
+			<input type="button" class="toolbtn" ng-click="SelectedButtonTool='clear'" title="clear" style=" background-image:url('Icons/clr.png');"   />
+		</li>
+		</li>
+		<li ng-show="SelectedMouseTool == 'circle'||SelectedMouseTool == 'line'||SelectedMouseTool == 'rectangular'||SelectedMouseTool == 'ellipse'||SelectedButtonTool == 'threshold'" > <br/><span>TOOL OPTIONS:</span><hr></li>
+        <li ng-show="SelectedMouseTool == 'circle'||SelectedMouseTool == 'line'||SelectedMouseTool == 'rectangular'||SelectedMouseTool == 'ellipse'"><span>Color    :</span>
+             <select class = "optionbtn" ng-model="SelectedColor" ng-options="o as o for o in Colours"></select></li>
+        <li ng-show="SelectedButtonTool == 'threshold'"><span>Threshold Range:</span><br>
               <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.min" /><br>
-              <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.max" /></li>
-         <li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'||SelectedTool == 'threshold'||SelectedTool == 'reset image'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>
+              <input  type="range" min={{Rmin}} max={{Rmax}}  ng-model="Tval.max" />
+		</li>
+    <!--<li ng-show="SelectedTool == 'plain' || SelectedTool == 'invplain' || SelectedTool == 'rainbow' || SelectedTool == 'hot' || SelectedTool == 'test' || SelectedTool == 'sharpen' || SelectedTool == 'sobel'||SelectedTool == 'threshold'||SelectedTool == 'reset image'"><input  class = "optionbtn" type="button" value="Apply" id="applybtn" /></li>
          <li><input  class = "optionbtn" type="button" value="ClearAnnotaion" id="clrann" /></li>
-         <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li> 
-      </ul> 
-    </div>    
+         <li><input  class = "optionbtn" type="button" value="Clear" id="clrbtn" /></li>-->
+      </ul>
+    </div>
     <div class = "displaydiv" ng-show = "tagState" id ="tagdiv" style="top:6.2%;left: 65%;width: 34.6%;height: 86.6%;position: absolute ;z-index: 50;overflow: auto;line-height: 15px;padding: 0.2%">
     <span ng-show="Tag">Search : </span><input ng-show="Tag" class="optionbtn" type="text"style="text-align: left" ng-model = "search">
-     <div style="top:20px;width: 100%;position:absolute;display:table;">  
-       <div ng-show="Tag" style="height:20px; width: 100%;position:relative;display:table-row"> 
+     <div style="top:20px;width: 100%;position:absolute;display:table;">
+       <div ng-show="Tag" style="height:20px; width: 100%;position:relative;display:table-row">
          <span style="display: table-cell; text-align: center;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" >Name</span>
          <span style="display: table-cell; text-align: center;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" >Tag</span>
          <span style="display: table-cell;text-align: left;font: normal normal bold 1em/normal 'Times New Roman', Times, serif;border-bottom: #898888 1px solid" >&emsp;&emsp;Value</span>
        </div>
-      
+
        <div ng-repeat = "tagObj in Tag | filter:search" style="width: 100%;height:15px;position:relative;display:table-row;">
          <span style="display: table-cell;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.Name}}</span>
          <span style="display: table-cell;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.TagStr}}</span>
@@ -65,23 +89,29 @@
      <div ng-hide="Tag"  style="top:45%;left:10%;width: 80%;height:10%;text-align: center; position:relative;display:inline-table">
         Here Demographic information will be Shown once Image is added
      </div>
-    </div>         
+    </div>
      <footer class ="displaydiv" style="top:93.7%;left: 0%;width: 100%;height: 6%;position: absolute">
       <span ng-show="PatientName" style="top:0%;left: 20%;width: 30%;height: 50%;text-align: left;font-size: 1em; position: absolute"> PatientName:{{PatientName}}</span>
       <span ng-show="PatientId" style="top:50%;left: 20%;width: 30%;height: 50%;text-align: left;font-size: 1em; position: absolute"> PatientId:{{PatientId}}</span>
       <span ng-show="WWidth" style="top:0%;left: 50%;width: 30%;height: 50%;text-align: right;font-size: 1em; position: absolute"> Window Width:{{WWidth}}</span>
       <span ng-show="WCenter" style="top:50%;left: 50%;width: 30%;height: 50%;text-align: right;font-size: 1em; position: absolute"> Window Center:{{WCenter}}</span>
-     </footer>
-  </div> 
-
-  <!--<div class="github-fork-ribbon-wrapper right-bottom" style="left:80%; top:84% ; width :20%;height:16%;  position: absolute ">
-        <div class="github-fork-ribbon">
-             <a href="https://github.com/hrhrprasath/NgDicomViewer">Fork me on GitHub</a>
-        </div>
-    </div>-->
-     <!-- <div class = "ribbon" style="left:95%; top:95% ; width :5%;height:5%;  position: absolute ">
-      <a href="https://github.com/hrhrprasath/NgDicomViewer">forke me</a>
-      </div>-->
-      
+      <span ng-click="ishelp = true" style="top:25%;left: 69%;width: 30%;height: 50%;text-align: right;font-size: 1em; position: absolute;cursor: help"> Help</span>
+     </footer> 
+    <div  ng-show="ishelp"class="helpdiv">
+          <div class="helptopcontent" style=" left:1.5%; width:5%;height:10%; border:solid 5px red; border-color: transparent transparent red red ;  border-radius:  0  0  0px 50%;">
+          </div> 
+          <div class="helptopcontent" style=" left:8%;top:15%; width:5%;height:10%;">
+          Options
+          </div>   
+          <div class="helptopcontent" style=" left:93.5%; width:5%;height:10%; border:solid 5px red; border-color: transparent red red transparent ;  border-radius:  0  0  50% 0px; ">
+          </div> 
+          <div class="helptopcontent" style=" left:88%;top:15%; width:5%;height:10%; text-align: right">
+          Tags
+          </div> 
+          <input type="button" ng-click="ishelp = false" class="helptopcontent" style=" left:93.5%; top:80%; width:5%;height:10%; border:solid 2px red; 
+            border-radius:20px; text-align: center; background-color: transparent;font:  normal normal bold 1em 'Times New Roman', Times, serif;" value="OK">
+    </div>
+  </div>
+  
   </body>
 </html>

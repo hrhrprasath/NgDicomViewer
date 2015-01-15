@@ -1,34 +1,37 @@
-var ngDicomViewer=angular.module('ngdicomviewer',[]);var dwv=dwv||{};dwv.dicom=dwv.dicom||{};ngDicomViewer.controller('dicomcontroller',function($scope,$rootScope,$document,$window){$scope.Tool=["circle","line","rectangular","ellipse","WindowLevel","plain","invplain","rainbow","hot","test","sharpen","sobel","threshold","reset image"];$scope.Colours=['red','lime','blue','yellow','orange','aqua','fuchsia','white','black','gray','grey','silver','maroon','olive','green','teal','navy','purple'];$scope.SelectedColor='red';$scope.SelectedTool="line";$scope.RemoteFile=false;});ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope){return{restrict:"E",link:function(scope,element,attrs){var angularCanvas=angular.element('<canvas style="top:0%;left:0%; position: relative;margin:0px;padding: 0px;background-color: black;"></canvas> ');angularCanvas[0].width=attrs["canvaswidth"]||512;angularCanvas[0].height=attrs["canvasheight"]||512;element[0].style.width=(attrs["canvaswidth"]||512)+'px';element[0].style.height=(attrs["canvasheight"]||512)+'px';$compile(angularCanvas)(scope);element.append(angularCanvas);
-var imagehandler=null;var buttonTool=function(){if(!imagehandler.GetCanvasImage())
-return false;if(attrs["tool"]=="plain"||attrs["tool"]=="invplain"||attrs["tool"]=="rainbow"||attrs["tool"]=="hot"||attrs["tool"]=="test"){imagehandler.SetToolParam(attrs["tool"]);imagehandler.GetWindowLevelTool().ChangeColorMap();}
-if(attrs["tool"]=="sharpen"){imagehandler.GetFilterTool().Sharpen();}
-if(attrs["tool"]=="sobel"){imagehandler.GetFilterTool().Sobel();}
-if(attrs["tool"]=="reset image"){var index=filehandler.GetCurrentIndex();filehandler.ResetCurrentImage(index);imagehandler=filehandler.GetCurrentImageHandler();imagehandler.annotationHistory.length=0;}
-if(attrs["tool"]=="threshold"){imagehandler.GetFilterTool().Threshold();}};var mouseDown=function(event){if(!imagehandler)
+var ngDicomViewer=angular.module('ngdicomviewer',[]);var dwv=dwv||{};dwv.dicom=dwv.dicom||{};ngDicomViewer.controller('dicomcontroller',function($scope,$rootScope,$document,$window){$scope.Tool=["circle","line","rectangular","ellipse","WindowLevel","plain","invplain","rainbow","hot","test","sharpen","sobel","threshold","reset image","clear","clearAnnotation"];$scope.Colours=['red','lime','blue','yellow','orange','aqua','fuchsia','white','black','gray','grey','silver','maroon','olive','green','teal','navy','purple'];$scope.SelectedColor='red';$scope.SelectedMouseTool="line";$scope.SelectedButtonTool="";$scope.RemoteFile=false;});ngDicomViewer.directive("dicomviewer",function($document,$compile,$rootScope){return{restrict:"E",link:function(scope,element,attrs){var angularCanvas=angular.element('<canvas style="top:0%;left:0%; position: relative;margin:0px;padding: 0px;background-color: black;"></canvas> ');angularCanvas[0].width=attrs["canvaswidth"]||512;angularCanvas[0].height=attrs["canvasheight"]||512;element[0].style.width=(attrs["canvaswidth"]||512)+'px';element[0].style.height=(attrs["canvasheight"]||512)+'px';$compile(angularCanvas)(scope);element.append(angularCanvas);$rootScope.Tag=[];$rootScope.Rmin=0;$rootScope.Rmax=100;var view=null;var filehandler=null;var imagehandler=null;var isThresholdOn=false;scope.$watch('SelectedButtonTool',function(newval,oldval){if(newval!=oldval&&newval){isThresholdOn=false;if(!imagehandler)
+{scope.SelectedButtonTool="";return false;}
+if(!imagehandler.GetCanvasImage())
+{scope.SelectedButtonTool="";return false;}
+if(newval=="plain"||newval=="invplain"||newval=="rainbow"||newval=="hot"||newval=="test"){imagehandler.SetToolParam(newval);imagehandler.GetWindowLevelTool().ChangeColorMap();}
+if(newval=="sharpen"){imagehandler.GetFilterTool().Sharpen();}
+if(newval=="sobel"){imagehandler.GetFilterTool().Sobel();}
+if(newval=="reset image"){var index=filehandler.GetCurrentIndex();filehandler.ResetCurrentImage(index);imagehandler=filehandler.GetCurrentImageHandler();imagehandler.annotationHistory.length=0;}
+if(newval=="threshold"){isThresholdOn=true;imagehandler.GetFilterTool().Threshold();}
+if(newval=='clear'){imagehandler=null;$rootScope.Tag=[];$rootScope.PatientName="";$rootScope.PatientId="";$rootScope.WWidth="";$rootScope.WCenter="";$rootScope.Rmin=0;$rootScope.Rmax=100;tags=null;if(angularCanvas)
+angularCanvas[0].width=angularCanvas[0].width;}
+if(newval=='clearAnnotation'){if(imagehandler)
+imagehandler.ClearAnnotation();}
+if(newval!="threshold")
+scope.SelectedButtonTool="";}});$rootScope.$watch('Tval.min',function(newval,oldval){if(newval!=oldval){if(isThresholdOn){imagehandler.thresholdRange.min=newval;imagehandler.GetFilterTool().Threshold();}}});$rootScope.$watch('Tval.max',function(newval,oldval){if(newval!=oldval){if(isThresholdOn){imagehandler.thresholdRange.max=newval;imagehandler.GetFilterTool().Threshold();}}});var mouseDown=function(event){if(!imagehandler)
 return false;if(!imagehandler.GetCanvasImage())
-return false;if(attrs["tool"]!="WindowLevel"){imagehandler.SetToolParam(attrs["tool"],attrs["colour"]);imagehandler.GetAnnotationTool().Start(event);}
+return false;if(scope.SelectedMouseTool!="WindowLevel"){imagehandler.SetToolParam(scope.SelectedMouseTool,scope.SelectedColor);imagehandler.GetAnnotationTool().Start(event);}
 else{imagehandler.GetWindowLevelTool().Start(event);}}
 var mouseMove=function(event){if(!imagehandler)
 return false;if(!imagehandler.GetCanvasImage())
-return false;if(attrs["tool"]!="WindowLevel"){imagehandler.GetAnnotationTool().Track(event);}
+return false;if(scope.SelectedMouseTool!="WindowLevel"){imagehandler.GetAnnotationTool().Track(event);}
 else{imagehandler.GetWindowLevelTool().Track(event);}}
 var mouseUp=function(event){if(!imagehandler)
 return false;if(!imagehandler.GetCanvasImage())
-return false;if(attrs["tool"]!="WindowLevel"){imagehandler.GetAnnotationTool().Stop(event);}
+return false;if(scope.SelectedMouseTool!="WindowLevel"){imagehandler.GetAnnotationTool().Stop(event);}
 else{imagehandler.GetWindowLevelTool().Stop(event);scope.$apply(function(){$rootScope.WWidth=imagehandler.GetViewer().getWindowLut().getWidth();$rootScope.WCenter=imagehandler.GetViewer().getWindowLut().getCenter();});}
 event.stopPropagation();}
-element.bind('mousedown',mouseDown);element.bind('mousemove',mouseMove);element.bind('mouseup',mouseUp);element.bind('mouseleave',mouseUp);var applybtn=angular.element(document.getElementById(attrs["applybtnid"]));if(applybtn){applybtn.bind("click",buttonTool);}
-var mouseWheel=function(event){if(!filehandler)
+element.bind('mousedown',mouseDown);element.bind('mousemove',mouseMove);element.bind('mouseup',mouseUp);element.bind('mouseleave',mouseUp);var mouseWheel=function(event){if(!filehandler)
 return;if(event.wheelDelta<0){var idx=filehandler.GetCurrentIndex();if((idx+1)<(filehandler.fileList.length)){filehandler.SetDisplayFile(idx+1);imagehandler=filehandler.GetCurrentImageHandler();fileChangeUpdate();}}
 else{var idx=filehandler.GetCurrentIndex();if(idx&&(idx<(filehandler.fileList.length))){filehandler.SetDisplayFile(idx-1);imagehandler=filehandler.GetCurrentImageHandler();fileChangeUpdate();}}};angularCanvas.bind('mousewheel',mouseWheel);var fileUtilityElement=angular.element(document.getElementById(attrs["fileutilityid"]));var fileChangeUpdate=function(){scope.$apply(function(){$rootScope.Tag=imagehandler.GetFilteredTags();$rootScope.PatientName=imagehandler.tag.PatientName.value.toString();$rootScope.PatientId=imagehandler.tag.PatientID.value.toString();$rootScope.WWidth=imagehandler.GetViewer().getWindowLut().getWidth();$rootScope.WCenter=imagehandler.GetViewer().getWindowLut().getCenter();$rootScope.Rmin=imagehandler.GetViewer().getImage().getDataRange().min;$rootScope.Rmax=imagehandler.GetViewer().getImage().getDataRange().max;$rootScope.Tval=imagehandler.thresholdRange;});};var onFileListChanged=function(event){var filesArray=event.target.files;clear();filehandler=FileHandler.GetInstence();filehandler.SetElements(angularCanvas[0],element[0],fileChangeUpdate);filehandler.InitializeFiles(filesArray);filehandler.SetDisplayFile(0);imagehandler=filehandler.GetCurrentImageHandler();}
 fileUtilityElement.bind('change',onFileListChanged);var urlList=angular.element(document.getElementById(attrs["urllistid"]));var openUrlBtn=angular.element(document.getElementById(attrs["urlopenbtnid"]));var RemoteFileLoad=function(){filehandler=FileHandler.GetInstence();filehandler=FileHandler.GetInstence();filehandler.SetElements(angularCanvas[0],element[0],fileChangeUpdate);var list=(urlList[0].value).split(';');filehandler.InitializeRemoteFiles(list);filehandler.SetDisplayFile(0);imagehandler=filehandler.GetCurrentImageHandler();}
 if(openUrlBtn)
-openUrlBtn.bind('click',RemoteFileLoad);var clearButton=angular.element(document.getElementById(attrs["clearbuttonid"]));var clear=function(){imagehandler=null;scope.$apply(function(){$rootScope.Tag=[];$rootScope.PatientName="";$rootScope.PatientId="";$rootScope.WWidth="";$rootScope.WCenter="";$rootScope.Rmin=0;$rootScope.Rmax=100;});tags=null;if(angularCanvas)
-angularCanvas[0].width=angularCanvas[0].width;}
-if(clearButton)
-clearButton.bind('click',clear);var clearAnnotationBtn=angular.element(document.getElementById(attrs["clearannotationbuttonid"]));var clearAnnotation=function(){imagehandler.ClearAnnotation();}
-if(clearAnnotationBtn)
-clearAnnotationBtn.bind('click',clearAnnotation);}};});var AnnotationTools=(function(){function AnnotationTools(){this.context;this.startx;this.starty;this.canvas;this.isToolActive=false;this.toolHistory=[];this.currentShape;this.currentColour;this.imageData=null;this._pixelSpacingX=1;this._pixelSpacingY=1;this._isMouseMoved=false;this.imageHandler=null;}
+openUrlBtn.bind('click',RemoteFileLoad);var clear=function(){imagehandler=null;scope.$apply(function(){$rootScope.Tag=[];$rootScope.PatientName="";$rootScope.PatientId="";$rootScope.WWidth="";$rootScope.WCenter="";$rootScope.Rmin=0;$rootScope.Rmax=100;});tags=null;if(angularCanvas)
+angularCanvas[0].width=angularCanvas[0].width;}}};});var AnnotationTools=(function(){function AnnotationTools(){this.context;this.startx;this.starty;this.canvas;this.isToolActive=false;this.toolHistory=[];this.currentShape;this.currentColour;this.imageData=null;this._pixelSpacingX=1;this._pixelSpacingY=1;this._isMouseMoved=false;this.imageHandler=null;}
 AnnotationTools.prototype.SetImageHandler=function(imagehandler){if(imagehandler){this.imageHandler=imagehandler;this.context=this.imageHandler.context;this.canvas=this.imageHandler.canvas;this.toolHistory=this.imageHandler.annotationHistory;this.currentShape=this.imageHandler.currentTool;this.currentColour=this.imageHandler.currentColour;this.imageData=this.imageHandler.canvasImage;}
 var pxlValue;if(this.imageHandler.tag.PixelSpacing)
 pxlValue=this.imageHandler.tag.PixelSpacing.value;else if(this.imageHandler.tag.ImagerPixelSpacing)

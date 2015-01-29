@@ -18,7 +18,7 @@
     <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller" ng-init="ishelp = true" style="top:0%;left: 0%;width: 99.8%;height: 100%;padding: 0px; position: absolute">
     <header class ="displaydiv" style="top:0%;left: 0%;width: 100%;height: 6%;position: absolute">
      <input ng-init = "optionState =false;"  ng-click = "optionState = !optionState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':optionState}"type="button" value="=" title="option's"/>
-      <span style="top:0%;left: 25%;width: 50%;height: 100%; margin:.3%;text-align: center;font-size: 2em; position: absolute"> Ng - DicomViewer </span>
+      <span style="top:0%;left: 25%;width: 50%;height: 100%; margin:.3%;text-align: center;font-size: 2em; position: absolute;color: navy;font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;text-shadow: 2px 2px #37A9DA;"> Ng-DicomViewer </span>
       <input id="tagbtn"  ng-click = "tagState = !tagState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':tagState}"type="button" style="float: right;" value="+" title="tag's"/>
     </header>
      <a ng-hide = tagState href="https://github.com/hrhrprasath/NgDicomViewer"  style="left:90%; top:0% ; width :5%;height:15%;  position: absolute; z-index:15000 ">

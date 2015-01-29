@@ -344,7 +344,7 @@ var AnnotationTools = (function () {
         if (this.imageHandler.tag.PixelSpacing)
             pxlValue = this.imageHandler.tag.PixelSpacing.value;
         else if (this.imageHandler.tag.ImagerPixelSpacing)
-            pxlValue = tag.ImagerPixelSpacing.value;
+            pxlValue = this.imageHandler.tag.ImagerPixelSpacing.value;
         if (pxlValue) {
             this._pixelSpacingX = parseFloat(pxlValue[0]);
             this._pixelSpacingY = parseFloat(pxlValue[1]);

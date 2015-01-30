@@ -96,7 +96,7 @@ ul, li
 	  max-height:95%;
 	  overflow-y:auto;
 }
-ul,li:not(.nostyle){
+.nostyle{
     list-style-type: disc;
     line-height: .6em;
     font: inherit;

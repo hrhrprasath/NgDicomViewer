@@ -93,13 +93,23 @@ ul, li
     padding: 4px;
     font: normal 12px/normal "ABeeZee" , Helvetica, sans-serif;
     color: rgba(0,0,0,1);
-	max-height:95%;
-	overflow-y:auto;
+	  max-height:95%;
+	  overflow-y:auto;
+}
+ul,li:not(.nostyle){
+    list-style-type: disc;
+    line-height: .6em;
+    font: inherit;
+    color: inherit;
+    position: relative; 
+    overflow-y: visible;
+    left: 5%;
+    width: 90%;   
 }
 .canvousdiv
 {
     top: 10.2%;
-    left: 31%;
+    left: 30%;
     width: auto;
     height: auto;
     position: absolute;
@@ -179,4 +189,39 @@ ul, li
     margin: 0px;     
     color:rgba(250,0,0,1);
     z-index: 15002; 
+}
+.helpbtn{
+    left:93.5%;
+    top:80%; 
+    width:5%;
+    height:10%;
+    border:solid 2px red; 
+    border-radius:20px;
+    text-align: center; 
+    background-color: transparent;
+    font:  normal normal bold 1em 'Times New Roman', Times, serif;     
+    outline: none;
+}
+.helpbtn:hover {
+    background-color: red;
+    color:white;
+}
+.helptxt{
+    top:25%;
+    left:25%;
+    width:50%;
+    height:50%;
+    position:absolute;
+    color:White;
+    background-color: rgba(137,136,136,.2);
+    font:italic normal bold .8em/normal 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;  
+}
+.helptextcontainer{
+    overflow: auto;
+    display: inline;
+    position: relative;
+    display: block;
+    top: 10%;
+    height: 80%;
+    overflow-y: auto;
 }

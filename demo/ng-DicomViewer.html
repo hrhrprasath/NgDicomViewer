@@ -4,8 +4,15 @@
     <title>
       Ng-DicomViewer
     </title>
+   
+     
+
+    <script type="text/javascript" src="Src/FrameWork/openjpeg.js"></script>  
+    
     <script src="Src/FrameWork/angular.js"></script> 
-    <link rel="stylesheet" type="text/css" href="Style.css">
+    <script src="Src/NgDicomViewer-mini.js"></script> 
+    
+     <link rel="stylesheet" type="text/css" href="Style.css">
   </head>
   <body  oncontextmenu="return false;"  ng-init = "tagState =false;">
     <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller" ng-init="ishelp = true" style="top:0%;left: 0%;width: 99.8%;height: 100%;padding: 0px; position: absolute">
@@ -105,8 +112,6 @@
             border-radius:20px; text-align: center; background-color: transparent;font:  normal normal bold 1em 'Times New Roman', Times, serif;" value="OK">
     </div>
   </div>
-	<script src="Src/NgDicomViewer-mini.js"></script> 
-	<script type="text/javascript" src="Src/FrameWork/openjpeg.js"></script>  
   
   </body>
 </html>

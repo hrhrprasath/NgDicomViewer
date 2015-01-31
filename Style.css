@@ -108,29 +108,47 @@ ul, li
 }
 .canvousdiv
 {
-    top: 10.2%;
-    left: 30%;
-    width: auto;
-    height: auto;
-    position: absolute;
-    display: block;
-    padding: auto;
-    margin: 0px;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    cursor: pointer;
-    border: 1px solid #898888;
-    color: rgba(0,0,0,1);
-    background: #f5f5f5;
-    -webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
-    box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+	top: 10.2%;
+	left: 21%;
+	width: 59%;
+	height: 80%;
+	position: absolute;
+	margin: 0px;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	cursor: pointer;
+	border: 1px solid #898888;
+	color: rgba(0,0,0,1);
+	background: #f5f5f5;
+	-webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+	box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
+	overflow: auto;
+	display: -webkit-flex;
+	-webkit-align-items: flex-start;
+	display: flex;
+	align-items: flex-start;
+}
+.dicom{
+	/* width: auto; */
+	/* height: auto; */
+	/* left: 50%; */
+	/* top: 50%; */
+	/* margin: 0px -50% 0px 0px; */
+	/* padding: 0px; */
+	/* display: block; */
+	position: relative;
+	/* transform: translate(-50%, -50%); */
+	display: block;
+	-webkit-align-self: center;
+	align-self: center;
+	margin-left: auto;
+	margin-right: auto;
 }
 .toolbtn
 {
 	width:30px;
 	height:30px;
-	/*display:inline-table;*/
 	margin:4%;
     cursor: pointer;
     border: 1px solid #cecece;
@@ -214,7 +232,7 @@ ul, li
     position:absolute;
     color:White;
     background-color: rgba(137,136,136,.2);
-    font:italic normal bold .8em/normal 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;  
+    font:italic normal bold .8em/normal 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 	Tahoma, sans-serif;  
 }
 .helptextcontainer{
     overflow: auto;

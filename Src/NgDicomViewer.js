@@ -214,7 +214,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     }
 
                 }
-
+				event.stopPropagation();
+				event.preventDefault();
             };
             angularCanvas.bind('mousewheel', mouseWheel);
             ///@End of Shapes------------------------------------->

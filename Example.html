@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Ng-DicomViewer Example
+    </title>
+    <script type="text/javascript" src="Src/FrameWork/openjpeg.js"></script>  
+    <script type="text/javascript" src="Src/FrameWork/angular.js"></script> 
+    <script type="text/javascript" src="Src/NgDicomViewer-mini.js"></script> 
+	<script type="text/javascript">
+		var Demo = angular.module('Demo',['ngdicomviewer']);
+	</script> 
+	
+  </head>
+   <body  oncontextmenu="return false;" ng-app="Demo" >
+   <input id = "fileinput" type="file" multiple="" /></li>
+ 	<dicomviewer class ="dicom" fileutilityid ="fileinput"></dicomviewer>
+	<select ng-model="SelectedButtonTool" ng-options="o as o for o in Tool.ButtonBasedTools" ng-select="clear"></select>
+	<select ng-model="SelectedMouseTool" ng-options="o as o for o in Tool.MouseBasedTools" ></select>
+	<input type="text" ng-model="SelectedColor" />
+  </body>
+</html>

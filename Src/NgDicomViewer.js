@@ -1,16 +1,6 @@
 ﻿var ngDicomViewer = angular.module('ngdicomviewer', []);
 var dwv = dwv || {};
 dwv.dicom = dwv.dicom || {};
-ngDicomViewer.controller('dicomcontroller', function ($scope, $rootScope, $document, $window) {
-    $scope.Tool = ["circle", "line", "rectangular", "ellipse", "WindowLevel", "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image","clear","clearAnnotation"];//Todo:better reset opoeration
-    $scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
-     'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
-    $scope.SelectedColor = 'red';
-    $scope.SelectedMouseTool = "line";
-	$scope.SelectedButtonTool = "";
-    $scope.RemoteFile = false;
-
-});
 ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope) {
     return {
         restrict: "E",
@@ -28,10 +18,17 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             //@ tools and Shapes part-------------------<
             //            var currentShape = attrs["tool"];
             //            var currentColour = attrs["colour"];
-            $rootScope.Tag = [];
+			 scope.Tool = {'MouseBasedTools':["circle", "line", "rectangular", "ellipse", "WindowLevel"],'ButtonBasedTools':[ "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image","clear","clearAnnotation"]};
+			scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
+			 'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
+			scope.SelectedColor = 'red';
+			scope.SelectedMouseTool = "line";
+			scope.SelectedButtonTool = "";
+			scope.RemoteFile = false;
+            scope.Tag = [];
 
-            $rootScope.Rmin = 0;
-            $rootScope.Rmax = 100;
+            scope.Rmin = 0;
+            scope.Rmax = 100;
             var view = null;
             var filehandler = null
             var imagehandler = null;
@@ -71,13 +68,13 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     }
                     if (newval == 'clear') {
                         imagehandler = null;
-                        $rootScope.Tag = [];
-                        $rootScope.PatientName = "";
-                        $rootScope.PatientId = "";
-                        $rootScope.WWidth = "";
-                        $rootScope.WCenter = "";
-                        $rootScope.Rmin = 0;
-                        $rootScope.Rmax = 100;
+                        scope.Tag = [];
+                        scope.PatientName = "";
+                        scope.PatientId = "";
+                        scope.WWidth = "";
+                        scope.WCenter = "";
+                        scope.Rmin = 0;
+                        scope.Rmax = 100;
                         tags = null;
                         if (angularCanvas)
                             angularCanvas[0].width = angularCanvas[0].width;
@@ -91,7 +88,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                 }
             });
 
-            $rootScope.$watch('Tval.min', function (newval, oldval) {
+            scope.$watch('Tval.min', function (newval, oldval) {
                 if (newval != oldval) {
                     if (isThresholdOn) {
                         imagehandler.thresholdRange.min = newval;
@@ -99,7 +96,7 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                     }
                 }
             });
-            $rootScope.$watch('Tval.max', function (newval, oldval) {
+            scope.$watch('Tval.max', function (newval, oldval) {
                 if (newval != oldval) {
                     if (isThresholdOn) {
                         imagehandler.thresholdRange.max = newval;
@@ -174,8 +171,8 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
                 else {
                     imagehandler.GetWindowLevelTool().Stop(event);
                     scope.$apply(function () {
-                        $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
-                        $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
+                        scope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
+                        scope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
                     });
                 }
                 event.stopPropagation();
@@ -224,14 +221,14 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             var fileUtilityElement = angular.element(document.getElementById(attrs["fileutilityid"]));
             var fileChangeUpdate = function () {
                 scope.$apply(function () {
-                    $rootScope.Tag = imagehandler.GetFilteredTags();
-                    $rootScope.PatientName = imagehandler.tag.PatientName.value.toString();
-                    $rootScope.PatientId = imagehandler.tag.PatientID.value.toString();
-                    $rootScope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
-                    $rootScope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
-                    $rootScope.Rmin = imagehandler.GetViewer().getImage().getDataRange().min;
-                    $rootScope.Rmax = imagehandler.GetViewer().getImage().getDataRange().max;
-                    $rootScope.Tval = imagehandler.thresholdRange;
+                    scope.Tag = imagehandler.GetFilteredTags();
+                    scope.PatientName = imagehandler.tag.PatientName.value.toString();
+                    scope.PatientId = imagehandler.tag.PatientID.value.toString();
+                    scope.WWidth = imagehandler.GetViewer().getWindowLut().getWidth();
+                    scope.WCenter = imagehandler.GetViewer().getWindowLut().getCenter();
+                    scope.Rmin = imagehandler.GetViewer().getImage().getDataRange().min;
+                    scope.Rmax = imagehandler.GetViewer().getImage().getDataRange().max;
+                    scope.Tval = imagehandler.thresholdRange;
 
                 });
             };
@@ -272,13 +269,13 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             var clear = function () {
                 imagehandler = null;
                 scope.$apply(function () {
-                    $rootScope.Tag = [];
-                    $rootScope.PatientName = "";
-                    $rootScope.PatientId = "";
-                    $rootScope.WWidth = "";
-                    $rootScope.WCenter = "";
-                    $rootScope.Rmin = 0;
-                    $rootScope.Rmax = 100;
+                    scope.Tag = [];
+                    scope.PatientName = "";
+                    scope.PatientId = "";
+                    scope.WWidth = "";
+                    scope.WCenter = "";
+                    scope.Rmin = 0;
+                    scope.Rmax = 100;
                 });
                 tags = null;
                 if (angularCanvas)

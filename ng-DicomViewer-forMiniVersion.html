@@ -4,18 +4,14 @@
     <title>
       Ng-DicomViewer
     </title>
-   
-     
-
     <script type="text/javascript" src="Src/FrameWork/openjpeg.js"></script>  
-    
     <script src="Src/FrameWork/angular.js"></script> 
     <script src="Src/NgDicomViewer-mini.js"></script> 
-    
-     <link rel="stylesheet" type="text/css" href="Style.css">
+    <link rel="stylesheet" type="text/css" href="Style.css">
   </head>
+
   <body  oncontextmenu="return false;"  ng-init = "tagState =false;">
-    <div ng-app="ngdicomviewer"  ng-controller = "dicomcontroller" ng-init="ishelp = true" style="top:0%;left: 0%;width: 100%;height: 100%;padding: 0px; position: absolute">
+    <div ng-app="ngdicomviewer" ng-init="ishelp = true" style="top:0%;left: 0%;width: 100%;height: 100%;padding: 0px; position: absolute">
     <header class ="displaydiv" style="top:0%;left: 0%;width: 99.8%;height: 6%;position: absolute">
      <input ng-init = "optionState =false;"  ng-click = "optionState = !optionState" class = "optionmainbtn" ng-class="{'optionmainbtnclick':optionState}"type="button" value="=" title="option's"/>
       <span style="top:0%;left: 25%;width: 50%;height: 100%; margin:.3%;text-align: center;font-size: 2em; position: absolute;color: navy;font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;text-shadow: 2px 2px #37A9DA;"> Ng-DicomViewer </span>
@@ -24,8 +20,13 @@
      <a ng-hide = tagState href="https://github.com/hrhrprasath/NgDicomViewer"  style="left:90%; top:0% ; width :5%;height:15%;  position: absolute; z-index:15000 ">
        <img src="Icons/forkme.png"  style="left:10%; top:0% ; width :90%;height:90%;">
       </a>
-    <div class = "canvousdiv">
-      <dicomviewer fileutilityid ="fileinput"  urllistid = "urlsList" urlopenbtnid ="openurlbtn" style="left:0%;top:0%;margin:0px;padding: 0px; width:auto;height:auto;position:abslute;display:block"></dicomviewer>
+    <div class = "canvousdiv" >
+	<div style="margin-left: auto;margin-right: auto;display: table;height: 100%;">
+	<div style="display: table-cell;vertical-align: middle;">
+      <dicomviewer class ="dicom" fileutilityid ="fileinput"  urllistid = "urlsList" urlopenbtnid ="openurlbtn" style=""></dicomviewer>
+	  
+	  </div> 
+	  </div>
     </div>
     <div ng-show = "optionState" class = "displaydiv" style="top:6.2%;left: 0%;width: 20%;height: 87.1%;position: absolute">
       <ul>

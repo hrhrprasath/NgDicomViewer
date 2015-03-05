@@ -21,8 +21,9 @@
    Button Tools:<select ng-model="SelectedButtonTool" ng-options="o as o for o in Tool.ButtonBasedTools" ng-select="clear"></select><br>
 	Mouse Tools:<select ng-model="SelectedMouseTool" ng-options="o as o for o in Tool.MouseBasedTools" ></select><br>
 	Annotation Colour :<input type="text" ng-model="SelectedColor" /><br>
-	Threshold Rmin<input type="text" ng-model="SelectedColor" /><br>
-	Threshold Rmin<input type="text" ng-model="SelectedColor" /><br>
+	Threshold Value Range : {{Rmin}} {{Rmax}}<br>
+	Threshold min<input type="text" ng-model="Tval.min" /><br>
+	Threshold max<input type="text" ng-model="Tval.max" /><br>
 	
  	<dicomviewer class ="dicom" fileutilityid ="fileinput" urllistid="urltxt" urlopenbtnid="urlbtn"></dicomviewer><br><br>
 	

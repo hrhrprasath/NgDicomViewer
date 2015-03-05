@@ -13,10 +13,27 @@
 	
   </head>
    <body  oncontextmenu="return false;" ng-app="Demo" >
-   <input id = "fileinput" type="file" multiple="" /></li>
- 	<dicomviewer class ="dicom" fileutilityid ="fileinput"></dicomviewer>
-	<select ng-model="SelectedButtonTool" ng-options="o as o for o in Tool.ButtonBasedTools" ng-select="clear"></select>
-	<select ng-model="SelectedMouseTool" ng-options="o as o for o in Tool.MouseBasedTools" ></select>
-	<input type="text" ng-model="SelectedColor" />
+   <input id = "fileinput" type="file" multiple="" /><br>
+   Url : <input type="text" id="urltxt" /><br>
+   click to open url:<input type="button" id="urlbtn"value="open url"/><br>
+   Info:&emsp;&emsp;name:{{PatientName}}  &emsp;&emsp;id:{{PatientId}}&emsp;&emsp;w:{{WWidth}}&emsp;&emsp;c:{{WCenter}}<br>
+   
+   Button Tools:<select ng-model="SelectedButtonTool" ng-options="o as o for o in Tool.ButtonBasedTools" ng-select="clear"></select><br>
+	Mouse Tools:<select ng-model="SelectedMouseTool" ng-options="o as o for o in Tool.MouseBasedTools" ></select><br>
+	Annotation Colour :<input type="text" ng-model="SelectedColor" /><br>
+	Threshold Rmin<input type="text" ng-model="SelectedColor" /><br>
+	Threshold Rmin<input type="text" ng-model="SelectedColor" /><br>
+	
+ 	<dicomviewer class ="dicom" fileutilityid ="fileinput" urllistid="urltxt" urlopenbtnid="urlbtn"></dicomviewer><br><br>
+	
+	
+   <div ng-repeat = "tagObj in Tag " style="width: 100%;height:15px;position:relative;display:table-row;">
+	 <span style="display: table-cell;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.Name}}</span>
+	 <span style="display: table-cell;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.TagStr}}</span>
+	 <span style="display: table-cell;overflow: hidden;border-bottom: #898888 1px solid" >{{tagObj.Value}}</span>
+   </div>
+
+    </div>
+	
   </body>
 </html>

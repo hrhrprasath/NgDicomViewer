@@ -28,12 +28,12 @@ You can then use it in your templates like so:
         </body>
     </html>
 
-Attributes in dicomviewer tag:<br>
+<b>Attributes in dicomviewer tag:</b><br>
 &emsp;1)<b>fileutilityid</b> : id of input tag of type file to open local dicom file<br>
 &emsp;2)<b>urllistid</b> : id of input text for  getting url list separated by ';'<br>
 &emsp;3)<b>urlopenbtnid</b> : button id to open images from url in the above<br>
 <br>
-Scope Variables:<br>
+<b>Scope Variables:</b><br>
 &emsp;1)<b>Tool</b> : Object To See available Tool Names which can be used to set them in selecting one<br>
 &emsp;&emsp;"Tool.ButtonBasedTools" Returns Available Button based Tool name list <br>
 &emsp;&emsp;"Tool.MouseBasedTools" Returns Available Mouse based Tool name list <br>

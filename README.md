@@ -38,7 +38,7 @@ Scope Variables:<br>
 &emsp;&emsp;"Tool.ButtonBasedTools" Returns Available Button based Tool name list <br>
 &emsp;&emsp;"Tool.MouseBasedTools" Returns Available Mouse based Tool name list <br>
 &emsp;2) SelectedButtonTool : setting the value same as available in list will apply the tool to opened image<br>
-&emsp;3) SelectedMouseTool : setting the value same as available in list will apply the tool on mouse operation on the &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;image<br>
+&emsp;3) SelectedMouseTool : setting the value same as available in list will apply the tool on mouse operation on the image<br>
 &emsp;4) SelectedColor : Any html Colour which can be setted the annotation colour<br>
 &emsp;5) Colours: list of recommended colours for the annotation<br>
 &emsp;6) PatientName : Opened image PatientName<br>

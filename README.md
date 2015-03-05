@@ -29,24 +29,24 @@ You can then use it in your templates like so:
     </html>
 
 Attributes in dicomviewer tag:<br>
-&emsp;1) fileutilityid : id of input tag of type file to open local dicom file<br>
-&emsp;2) urllistid : id of input text for  getting url list separated by ';'<br>
-&emsp;3) urlopenbtnid : button id to open images from url in the above<br>
+&emsp;1)<b>fileutilityid</b> : id of input tag of type file to open local dicom file<br>
+&emsp;2)<b>urllistid</b> : id of input text for  getting url list separated by ';'<br>
+&emsp;3)<b>urlopenbtnid</b> : button id to open images from url in the above<br>
 <br>
 Scope Variables:<br>
-&emsp;1) Tool: Object To See available Tool Names which can be used to set them in selecting one<br>
+&emsp;1)<b>Tool</b> : Object To See available Tool Names which can be used to set them in selecting one<br>
 &emsp;&emsp;"Tool.ButtonBasedTools" Returns Available Button based Tool name list <br>
 &emsp;&emsp;"Tool.MouseBasedTools" Returns Available Mouse based Tool name list <br>
-&emsp;2) SelectedButtonTool : setting the value same as available in list will apply the tool to opened image<br>
-&emsp;3) SelectedMouseTool : setting the value same as available in list will apply the tool on mouse operation on the image<br>
-&emsp;4) SelectedColor : Any html Colour which can be setted the annotation colour<br>
-&emsp;5) Colours: list of recommended colours for the annotation<br>
-&emsp;6) PatientName : Opened image PatientName<br>
-&emsp;7) PatientId : Opened image PatientId<br>
-&emsp;8) WWidth : current Window Width of image<br>
-&emsp;9) WCenter : current Window Centre of image<br>
-&emsp;10) Rmin,Rmax : min and max value for the threshold filter tool that can be applied on the image<br>
-&emsp;11) Tval : Object <br>
+&emsp;2)<b>SelectedButtonTool</b> : setting the value same as available in list will apply the tool to opened image<br>
+&emsp;3)<b>SelectedMouseTool</b> : setting the value same as available in list will apply the tool on mouse operation on the image<br>
+&emsp;4)<b>SelectedColor</b> : Any html Colour which can be setted the annotation colour<br>
+&emsp;5)<b>Colours</b> : list of recommended colours for the annotation<br>
+&emsp;6)<b>PatientName</b> : Opened image PatientName<br>
+&emsp;7)<b>PatientId</b> : Opened image PatientId<br>
+&emsp;8)<b>WWidth</b> : current Window Width of image<br>
+&emsp;9)<b>WCenter</b> : current Window Centre of image<br>
+&emsp;10)<b>Rmin,Rmax</b> : min and max value for the threshold filter tool that can be applied on the image<br>
+&emsp;11)<b> Tval</b> : Object <br>
 &emsp;&emsp;"Tval.min" specify threshold filter tool min to be applied on image<br>
 &emsp;&emsp;"Tval.max" specify threshold filter tool max to be applied on image<br>
   <br>

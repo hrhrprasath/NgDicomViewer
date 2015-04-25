@@ -19,12 +19,12 @@ ngDicomViewer.directive("dicomviewer", function ($document, $compile, $rootScope
             //            var currentShape = attrs["tool"];
             //            var currentColour = attrs["colour"];
 			 scope.Tool = {'MouseBasedTools':["circle", "line", "rectangular", "ellipse", "WindowLevel"],'ButtonBasedTools':[ "plain", "invplain", "rainbow", "hot", "test", "sharpen", "sobel","threshold","reset image","clear","clearAnnotation"]};
-    scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
-     'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
-    scope.SelectedColor = 'red';
-    scope.SelectedMouseTool = "line";
-	scope.SelectedButtonTool = "";
-    scope.RemoteFile = false;
+			scope.Colours = ['red', 'lime', 'blue', 'yellow', 'orange', 'aqua', 'fuchsia', 'white', 'black',
+			 'gray', 'grey', 'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple'];
+			scope.SelectedColor = 'red';
+			scope.SelectedMouseTool = "line";
+			scope.SelectedButtonTool = "";
+			scope.RemoteFile = false;
             scope.Tag = [];
 
             scope.Rmin = 0;
@@ -358,8 +358,8 @@ var AnnotationTools = (function () {
     */
     AnnotationTools.prototype.Start = function (event, shape, colour) {
         this.isToolActive = true;
-        this.startx = event.offsetX;
-        this.starty = event.offsetY;
+        this.startx = event.offsetX==undefined?event.layerX:event.offsetX;
+        this.starty = event.offsetY==undefined?event.layerY:event.offsetY;
     };
     /**
     * To capture mouse move event
@@ -375,26 +375,26 @@ var AnnotationTools = (function () {
         this.imageHandler.ResetAndUpdate();
         if (this.currentShape == "line") {
             this.context.moveTo(this.startx, this.starty);
-            this.context.lineTo(event.offsetX, event.offsetY);
+            this.context.lineTo(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY) + "mm";
-            this.context.fillText(str, event.offsetX, event.offsetY);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY) + "mm";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
         }
         if (this.currentShape == "rectangular") {
-            var width = (event.offsetX - this.startx);
-            var height = (event.offsetY - this.starty);
+            var width = (event.offsetX==undefined?event.layerX:event.offsetX - this.startx);
+            var height = (event.offsetY==undefined?event.layerY:event.offsetY - this.starty);
             this.context.moveTo(this.startx, this.starty);
             this.context.rect(this.startx, this.starty, width, height);
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY) + "cm2";
-            this.context.fillText(str, event.offsetX, event.offsetY);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY) + "cm2";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
 
         }
         if (this.currentShape == "circle") {
-            var width = (event.offsetX - this.startx);
-            var height = (event.offsetY - this.starty);
+            var width = (event.offsetX==undefined?event.layerX:event.offsetX - this.startx);
+            var height = (event.offsetY==undefined?event.layerY:event.offsetY - this.starty);
             var centerX = (width) / 2 + this.startx;
             var centerY = (height) / 2 + this.starty;
             var radius = (Math.sqrt((width * width) + (height * height))) / 2;
@@ -402,12 +402,12 @@ var AnnotationTools = (function () {
             this.context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY, radius) + "cm2";
-            this.context.fillText(str, event.offsetX + 5, event.offsetY);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY, radius) + "cm2";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX + 5, event.offsetY==undefined?event.layerY:event.offsetY);
         }
         if (this.currentShape == "ellipse") {
-            var width = (event.offsetX - this.startx);
-            var height = (event.offsetY - this.starty);
+            var width = (event.offsetX==undefined?event.layerX:event.offsetX - this.startx);
+            var height = (event.offsetY==undefined?event.layerY:event.offsetY - this.starty);
             var centerX = (width) / 2 + this.startx;
             var centerY = (height) / 2 + this.starty;
             if (width < 0)
@@ -430,8 +430,8 @@ var AnnotationTools = (function () {
             }
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY, radius, whalf, hhalf) + "cm2";
-            this.context.fillText(str, event.offsetX - whalf, event.offsetY + 14);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY, radius, whalf, hhalf) + "cm2";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX - whalf, event.offsetY==undefined?event.layerY:event.offsetY + 14);
         }
         this.context.strokeStyle = this.currentColour;
         this.context.stroke();
@@ -457,26 +457,26 @@ var AnnotationTools = (function () {
         var toolParamObj = new toolParam();
         if (this.currentShape == "line") {
             this.context.moveTo(this.startx, this.starty);
-            this.context.lineTo(event.offsetX, event.offsetY);
+            this.context.lineTo(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY) + "mm";
-            this.context.fillText(str, event.offsetX, event.offsetY);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY) + "mm";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
             toolParamObj.AreaStr = str;
             toolParamObj.txtFont = this.context.font;
             toolParamObj.txtColor = this.context.fillStyle;
         }
         if (this.currentShape == "rectangular") {
-            var width = (event.offsetX - this.startx);
-            var height = (event.offsetY - this.starty);
+            var width = (event.offsetX==undefined?event.layerX:event.offsetX - this.startx);
+            var height = (event.offsetY==undefined?event.layerY:event.offsetY - this.starty);
 
             this.context.moveTo(this.startx, this.starty);
             this.context.rect(this.startx, this.starty, width, height);
 
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY) + "cm2";
-            this.context.fillText(str, event.offsetX, event.offsetY);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY) + "cm2";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
 
             toolParamObj.AreaStr = str;
             toolParamObj.txtFont = this.context.font;
@@ -486,8 +486,8 @@ var AnnotationTools = (function () {
             toolParamObj.height = height;
         }
         if (this.currentShape == "circle") {
-            var width = (event.offsetX - this.startx);
-            var height = (event.offsetY - this.starty);
+            var width = (event.offsetX==undefined?event.layerX:event.offsetX - this.startx);
+            var height = (event.offsetY==undefined?event.layerY:event.offsetY - this.starty);
             var centerX = (width) / 2 + this.startx;
             var centerY = (height) / 2 + this.starty;
             var radius = (Math.sqrt((width * width) + (height * height))) / 2;
@@ -496,8 +496,8 @@ var AnnotationTools = (function () {
 
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY, radius) + "cm2";
-            this.context.fillText(str, event.offsetX + 5, event.offsetY);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY, radius) + "cm2";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX + 5, event.offsetY==undefined?event.layerY:event.offsetY);
 
             toolParamObj.AreaStr = str;
             toolParamObj.txtFont = this.context.font;
@@ -510,8 +510,8 @@ var AnnotationTools = (function () {
             toolParamObj.radius = radius;
         }
         if (this.currentShape == "ellipse") {
-            var width = (event.offsetX - this.startx);
-            var height = (event.offsetY - this.starty);
+            var width = (event.offsetX==undefined?event.layerX:event.offsetX - this.startx);
+            var height = (event.offsetY==undefined?event.layerY:event.offsetY - this.starty);
             var centerX = (width) / 2 + this.startx;
             var centerY = (height) / 2 + this.starty;
             if (width < 0)
@@ -534,8 +534,8 @@ var AnnotationTools = (function () {
             }
             this.context.font = '14pt Calibri';
             this.context.fillStyle = this.currentColour;
-            var str = this.CalculateArea(event.offsetX, event.offsetY, radius, whalf, hhalf) + "cm2";
-            this.context.fillText(str, event.offsetX - whalf, event.offsetY + 14);
+            var str = this.CalculateArea(event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY, radius, whalf, hhalf) + "cm2";
+            this.context.fillText(str, event.offsetX==undefined?event.layerX:event.offsetX - whalf, event.offsetY==undefined?event.layerY:event.offsetY + 14);
 
             toolParamObj.AreaStr = str;
             toolParamObj.txtFont = this.context.font;
@@ -551,8 +551,8 @@ var AnnotationTools = (function () {
 
         toolParamObj.startX = this.startx;
         toolParamObj.startY = this.starty,
-        toolParamObj.endX = event.offsetX;
-        toolParamObj.endY = event.offsetY;
+        toolParamObj.endX = event.offsetX==undefined?event.layerX:event.offsetX;
+        toolParamObj.endY = event.offsetY==undefined?event.layerY:event.offsetY;
         toolParamObj.colour = this.currentColour;
         toolParamObj.shape = this.currentShape;
         this.toolHistory.push(toolParamObj);
@@ -704,8 +704,8 @@ var WindowLevelTool = (function () {
     * @return none
     */
     WindowLevelTool.prototype.Start = function (event) {
-        this.startX = event.offsetX;
-        this.startY = event.offsetY;
+        this.startX = event.offsetX==undefined?event.layerX:event.offsetX;
+        this.startY = event.offsetY==undefined?event.layerY:event.offsetY;
         this.isActive = true;
     };
     /**
@@ -718,8 +718,8 @@ var WindowLevelTool = (function () {
         if (!this.isActive)
             return
         // difference to last position
-        var diffX = event.offsetX - this.startX;
-        var diffY = event.offsetY - this.startY;
+        var diffX = event.offsetX==undefined?event.layerX:event.offsetX - this.startX;
+        var diffY = event.offsetY==undefined?event.layerY:event.offsetY - this.startY;
         // calculate new window level
         var windowCenter = parseInt(this.viewer.getWindowLut().getCenter(), 10) + diffY;
         var windowWidth = parseInt(this.viewer.getWindowLut().getWidth(), 10) + diffX;
@@ -732,8 +732,8 @@ var WindowLevelTool = (function () {
         this.viewer.generateImageData(imageData);
         this.context.putImageData(imageData, 0, 0);
         // store position
-        this.startX = event.offsetX;
-        this.startY = event.offsetY;
+        this.startX = event.offsetX==undefined?event.layerX:event.offsetX;
+        this.startY = event.offsetY==undefined?event.layerY:event.offsetY;
         this.imageHandler.SetCanvasImage(imageData);
         this.imageHandler.Update();
     };
@@ -744,8 +744,8 @@ var WindowLevelTool = (function () {
     * @return none
     **/
     WindowLevelTool.prototype.Stop = function (event) {
-        this.startX = event.offsetX;
-        this.startY = event.offsetY;
+        this.startX = event.offsetX==undefined?event.layerX:event.offsetX;
+        this.startY = event.offsetY==undefined?event.layerY:event.offsetY;
         this.isActive = false;
     };
     //     /**
@@ -756,8 +756,8 @@ var WindowLevelTool = (function () {
     //     **/
     //    WindowLevelTool.prototype.Clear = function(event)
     //    {
-    //        this.startX = event.offsetX;
-    //        this.startY = event.offsetY;
+    //        this.startX = event.offsetX==undefined?event.layerX:event.offsetX;
+    //        this.startY = event.offsetY==undefined?event.layerY:event.offsetY;
     //        this.isActive = false;
     //    };
 
@@ -829,7 +829,7 @@ var TransformationTool = (function () {
         if (event.wheelDelta > 0) {
             //scale = 2;
             this._scale += 1;
-            this.ZoomIN(this._scale, event.offsetX, event.offsetY);
+            this.ZoomIN(this._scale, event.offsetX==undefined?event.layerX:event.offsetX, event.offsetY==undefined?event.layerY:event.offsetY);
         }
         else {
             // scale =.5;
@@ -837,7 +837,7 @@ var TransformationTool = (function () {
         }
         //this.imageData = imagedata;
 
-        // this.ZoomIN(scale,event.offsetX,event.offsetY);
+        // this.ZoomIN(scale,event.offsetX==undefined?event.layerX:event.offsetX,event.offsetY==undefined?event.layerY:event.offsetY);
     };
     TransformationTool.prototype.ZoomIN = function (scale, centerx, centery) {
         var scaleX = scale;

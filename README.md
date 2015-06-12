@@ -60,7 +60,7 @@ Source project
 </ul>
 
 <br>
-Released under <a href="http://github.com/hrhrprasath/NgDicomViewer/blob/master/LICENSE">MIT licence</a>
+Released under <a href="https://github.com/hrhrprasath/NgDicomViewer/blob/master/LICENSE.txt">MIT licence</a>
 
 ==========================
 <h6 >Declaration<br>

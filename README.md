@@ -57,4 +57,12 @@ Source project
 <ul>
 <li><a href="https://github.com/ivmartel/dwv">Dwv</a></li>
 <li><a href="https://github.com/angular/angular.js">anngular js</a></li>
+</ul>
 
+<br>
+Released under <a href="http://github.com/hrhrprasath/NgDicomViewer/blob/master/LICENSE">MIT licence</a>
+
+==========================
+<h6 >Declaration<br>
+&emsp;This app is not intended for clinical or diagnostic use. Any use of this viewer for diagnosis or in a clinical setting is strongly discouraged and should be avoided. This app is provided “as is” without warranty of any kind, either expressed or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, or non-infringement. In no event, shall author is liable for any special, incidental, indirect or consequential damages of any kind, or any damages whatsoever resulting from the use of this app, data or technical information accessed and viewed with this app, whether or not advised of the possibility of damage, under any theory of liability, arising out of or in connection with the use or performance of this app.
+</h6>
